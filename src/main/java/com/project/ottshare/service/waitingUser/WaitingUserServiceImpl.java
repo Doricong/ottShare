@@ -113,7 +113,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         switch (ott) {
             case NETFLIX:
                 return 2;
-            case DISNEY_PLUS:
+            case WAVE:
                 return 3;
             case TVING:
                 return 3;
