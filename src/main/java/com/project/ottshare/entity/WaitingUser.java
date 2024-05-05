@@ -23,6 +23,12 @@ public class WaitingUser extends BaseTimeEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "ott_id")
+    private String ottId;
+
+    @Column(name = "ott_password")
+    private String ottPassword;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "ott", nullable = false)
     private OttType ott;

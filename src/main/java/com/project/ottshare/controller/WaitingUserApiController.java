@@ -1,7 +1,12 @@
 package com.project.ottshare.controller;
 
+import com.project.ottshare.dto.ottShareRoom.OttSharingRoomRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
+import com.project.ottshare.entity.OttShareRoom;
+import com.project.ottshare.entity.SharingUser;
+import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
+import com.project.ottshare.service.sharingUser.SharingUserService;
 import com.project.ottshare.service.waitingUser.WaitingUserService;
 import com.project.ottshare.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +25,36 @@ import java.util.List;
 public class WaitingUserApiController {
 
     private final WaitingUserService waitingUserService;
+    private final OttShareRoomService ottShareRoomService;
+    private final SharingUserService sharingUserService;
 
     /**
      * user 저장
      */
     @PostMapping("/save")
     public ResponseEntity<String> saveWaitingUser(@Validated(ValidationSequence.class) @RequestBody WaitingUserRequest dto) {
-        // waitingUser에 user 저장
-        log.info("dto={}", dto.getUserInfo().getPassword());
+        // 사용자 정보 저장
+        log.info("Saving user data: {}", dto.getUserInfo().getUsername());
         waitingUserService.saveUser(dto);
-        log.info("자동매칭 시작");
-        return ResponseEntity.ok("User saved successfully");
+
+        // 해당 OTT 서비스의 리더와 비리더 멤버를 확인하고 모든 조건이 충족되면 방을 생성
+        List<WaitingUserResponse> member = waitingUserService.findNonLeaderByOtt(dto.getOtt());
+        WaitingUserResponse leader = waitingUserService.findLeaderByOtt(dto.getOtt());
+        member.add(leader); // 리더 정보를 리스트에 추가
+
+        // 인원 수가 충분하면 자동 매칭 대기방에서 사용자 삭제 및 방을 생성
+        waitingUserService.deleteUsers(member);
+
+        List<SharingUser> sharingUsers = sharingUserService.prepareSharingUsers(member);
+
+        OttSharingRoomRequest ottSharingRoomRequest = new OttSharingRoomRequest(sharingUsers, dto.getOtt());
+
+        OttShareRoom savedOttShareRoom = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
+
+        sharingUserService.associateRoomWithSharingUsers(sharingUsers, savedOttShareRoom);
+
+        log.info("Room created successfully for OTT service: {}", dto.getOtt());
+        return ResponseEntity.ok("Room created successfully.");
     }
 
 

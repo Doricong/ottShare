@@ -21,6 +21,10 @@ public class WaitingUserRequest {
     @NotNull(message = "OTT 선택은 필수 입니다.", groups = ValidationGroups.NotBlankGroups.class)
     private OttType ott;
 
+    private String ottId;
+
+    private String ottPassword;
+
     @NotNull(message = "leader 선택은 필수 입니다.", groups = ValidationGroups.NotBlankGroups.class)
     private Boolean isLeader;
 
@@ -28,6 +32,8 @@ public class WaitingUserRequest {
         WaitingUser waitingUser = WaitingUser.builder()
                 .user(user)
                 .ott(ott)
+                .ottId(isLeader ? ottId : null) // leader일 경우에만 OTT 정보 저장
+                .ottPassword(isLeader ? ottPassword : null)
                 .isLeader(isLeader)
                 .build();
 

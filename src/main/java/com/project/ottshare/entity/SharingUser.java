@@ -1,10 +1,7 @@
 package com.project.ottshare.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -12,9 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sharing_user")
-public class SharingUser extends BaseTimeEntity{
+public class SharingUser extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sharing_user_id")
     private Long id;
 
@@ -35,5 +33,9 @@ public class SharingUser extends BaseTimeEntity{
     //비즈니스 로직
     public void checked() {
         this.isChecked = true;
+    }
+
+    public void addRoom(OttShareRoom room) {
+        this.ottShareRoom = room;
     }
 }

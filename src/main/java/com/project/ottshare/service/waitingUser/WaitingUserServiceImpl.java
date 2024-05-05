@@ -64,8 +64,9 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     @Transactional
     public void deleteUsers(List<WaitingUserResponse> waitingUserResponses) {
         for (WaitingUserResponse waitingUserResponse : waitingUserResponses) {
-            WaitingUser waitingUser = waitingUserRepository.findById(waitingUserResponse.getUser().getId())
-                    .orElseThrow(() -> new UserNotFoundException(waitingUserResponse.getUser().getId()));
+            log.info("{}", waitingUserResponse.getId());
+            WaitingUser waitingUser = waitingUserRepository.findById(waitingUserResponse.getId())
+                    .orElseThrow(() -> new UserNotFoundException(waitingUserResponse.getId()));
             //waitingUser 삭제
             waitingUserRepository.delete(waitingUser);
         }

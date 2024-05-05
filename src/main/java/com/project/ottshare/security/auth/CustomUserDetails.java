@@ -28,6 +28,8 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
         this.attributes = attributes;
     }
 
+    public Long getId() { return user.getId();}
+
     public String getEmail() {
         return user.getEmail();
     }
