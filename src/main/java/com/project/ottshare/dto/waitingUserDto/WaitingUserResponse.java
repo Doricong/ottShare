@@ -19,12 +19,18 @@ public class WaitingUserResponse {
 
     private OttType ott;
 
+    private String ottId;
+
+    private String ottPassword;
+
     private boolean isLeader;
 
     public WaitingUserResponse(WaitingUser waitingUser) {
         this.id = waitingUser.getId();
         this.user = waitingUser.getUser();
         this.ott = waitingUser.getOtt();
+        this.ottId = waitingUser.getOttId();
+        this.ottPassword = waitingUser.getOttPassword();
         this.isLeader = waitingUser.isLeader();
     }
 

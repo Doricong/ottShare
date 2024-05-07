@@ -46,8 +46,12 @@ public class WaitingUserApiController {
         waitingUserService.deleteUsers(member);
 
         List<SharingUser> sharingUsers = sharingUserService.prepareSharingUsers(member);
+        String ottId = leader.getOttId();
+        String ottPassword = leader.getOttPassword();
 
-        OttSharingRoomRequest ottSharingRoomRequest = new OttSharingRoomRequest(sharingUsers, dto.getOtt());
+        log.info("ottId1={}", ottId);
+        log.info("ottPassword1={}", ottPassword);
+        OttSharingRoomRequest ottSharingRoomRequest = new OttSharingRoomRequest(sharingUsers, dto.getOtt(), ottId, ottPassword);
 
         OttShareRoom savedOttShareRoom = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
 

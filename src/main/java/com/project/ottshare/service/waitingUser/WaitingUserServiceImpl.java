@@ -39,6 +39,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     public void saveUser(WaitingUserRequest waitingUserRequest) {
         User user = userRepository.findByUsername(waitingUserRequest.getUserInfo().getUsername())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을수 없습니다."));
+
         //waitingUserRequest -> waitingUser
         WaitingUser waitingUser = waitingUserRequest.toEntity(user);
         //waitingUser 저장

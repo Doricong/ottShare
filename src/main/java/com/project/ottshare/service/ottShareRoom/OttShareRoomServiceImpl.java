@@ -37,6 +37,9 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
 
         OttShareRoom entity = ottSharingRoomRequests.toEntity();
 
+        log.info("ottId3={}", entity.getOttId());
+        log.info("ottPassword3={}", entity.getOttPassword());
+
         OttShareRoom savedOttShareRoom = ottShareRoomRepository.save(entity);
 
         return savedOttShareRoom;

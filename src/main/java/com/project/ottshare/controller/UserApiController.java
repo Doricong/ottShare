@@ -54,13 +54,15 @@ public class UserApiController {
                     userDetails.getAccount(),
                     userDetails.getAccountHolder(),
                     userDetails.getRole(),
-                    userDetails.isShareRoom()
+                    userDetails.isShareRoom() // 이 부분 수정
             );
+
             return ResponseEntity.ok(userInfo);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호입니다.");
         }
     }
+
 
 
     /**
