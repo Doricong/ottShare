@@ -1,14 +1,13 @@
 package com.project.ottshare.service.ottShareRoom;
 
-import com.project.ottshare.dto.ottShareRoom.OttSharingRoomRequest;
-import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
-import com.project.ottshare.entity.OttShareRoom;
-
-import java.util.List;
+import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
+import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 
 public interface OttShareRoomService {
 
-    OttShareRoom save(OttSharingRoomRequest ottSharingRoomRequest);
+    Long save(OttSharingRoomRequest ottSharingRoomRequest);
+
+    OttShareRoomResponse getOttShareRoom(Long id);
 
     void delete(Long id);
 

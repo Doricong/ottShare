@@ -44,6 +44,7 @@ public class UserApiController {
 
         if (isUser) {
             UserInfo userInfo = new UserInfo(
+                    userDetails.getId(),
                     userDetails.getUsername(),
                     userDetails.getPassword(),
                     userDetails.getNickname(),

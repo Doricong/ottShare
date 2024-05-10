@@ -1,8 +1,7 @@
-package com.project.ottshare.dto.ottShareRoom;
+package com.project.ottshare.dto.ottShareRoomDto;
 
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
-import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.OttType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,8 +34,6 @@ public class OttSharingRoomRequest {
                 .ottPassword(getOttPassword())
                 .build();
 
-        log.info("ottId2={}", ottShareRoom.getOttId());
-        log.info("ottPassword2={}", ottShareRoom.getOttPassword());
         return ottShareRoom;
     }
 }

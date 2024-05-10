@@ -1,9 +1,9 @@
 package com.project.ottshare.controller;
 
-import com.project.ottshare.dto.ottShareRoom.OttSharingRoomRequest;
+import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
+import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
-import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,13 +48,14 @@ public class WaitingUserApiController {
         String ottId = leader.getOttId();
         String ottPassword = leader.getOttPassword();
 
-        log.info("ottId1={}", ottId);
-        log.info("ottPassword1={}", ottPassword);
         OttSharingRoomRequest ottSharingRoomRequest = new OttSharingRoomRequest(sharingUsers, dto.getOtt(), ottId, ottPassword);
 
-        OttShareRoom savedOttShareRoom = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
+        Long savedOttShareRoomId = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
+        OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(savedOttShareRoomId);
 
-        sharingUserService.associateRoomWithSharingUsers(sharingUsers, savedOttShareRoom);
+        log.info("AA={}", ottShareRoom.getId());
+
+        sharingUserService.associateRoomWithSharingUsers(sharingUsers, ottShareRoom);
 
         log.info("Room created successfully for OTT service: {}", dto.getOtt());
         return ResponseEntity.ok("Room created successfully.");

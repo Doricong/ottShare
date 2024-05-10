@@ -1,5 +1,6 @@
 package com.project.ottshare.dto.userDto;
 
+import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.BankType;
 import com.project.ottshare.enums.Role;
@@ -48,5 +49,21 @@ public class UserResponse {
         this.accountHolder = user.getAccountHolder();
         this.role = user.getRole();
         this.isShareRoom = user.isShareRoom();
+    }
+
+    public User toEntity() {
+        return User.builder()
+                .id(id)
+                .username(username)
+                .password(password)
+                .email(email)
+                .nickname(nickname)
+                .phoneNumber(phoneNumber)
+                .bank(bank)
+                .account(account)
+                .accountHolder(accountHolder)
+                .role(role)
+                .isShareRoom(isShareRoom)
+                .build();
     }
 }

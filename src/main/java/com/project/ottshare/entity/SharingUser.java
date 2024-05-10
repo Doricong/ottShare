@@ -2,6 +2,7 @@ package com.project.ottshare.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Getter
@@ -9,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sharing_user")
+@Slf4j
 public class SharingUser extends BaseTimeEntity {
 
     @Id
@@ -36,6 +38,7 @@ public class SharingUser extends BaseTimeEntity {
     }
 
     public void addRoom(OttShareRoom room) {
+        log.info("room={}", room.getId());
         this.ottShareRoom = room;
     }
 }
