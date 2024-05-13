@@ -1,6 +1,8 @@
 package com.project.ottshare.controller;
 
-import com.project.ottshare.dto.ottShareRoomDto.Message;
+import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
+import com.project.ottshare.service.message.MessageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,14 +13,20 @@ import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class MessageController {
+
+    private final MessageService messageService;
 
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/messages/{roomId}")
-    public Message handleChatMessage(Message message, @DestinationVariable Long roomId) throws InterruptedException {
+    public MessageRequest handleChatMessage(MessageRequest message, @DestinationVariable Long roomId) throws InterruptedException {
         Thread.sleep(1000);
-        log.info("message={}", message.getContent());
-        // 메시지 처리 로직 (예: 저장, 로깅 등)
-        return new Message(HtmlUtils.htmlEscape(message.getContent()));
+        log.info("message={}", message.getMessage());
+        String escapedMessage = HtmlUtils.htmlEscape(message.getMessage());
+
+        messageService.save(message);
+
+        return new MessageRequest(message.getOttShareRoom(), message.getOttRoomMemberResponse(), escapedMessage);
     }
 }
