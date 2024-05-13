@@ -11,5 +11,5 @@ public interface MessageService {
 
     Long save(MessageRequest messageRequest);
 
-    Page<MessageResponse> getMessages(Long roomId, Long userId, Pageable pageable);
+    Page<MessageResponse> getMessages(Long roomId);
 }

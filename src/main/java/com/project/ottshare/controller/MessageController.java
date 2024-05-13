@@ -1,17 +1,25 @@
 package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
+import com.project.ottshare.dto.ottShareRoomDto.MessageResponse;
 import com.project.ottshare.service.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.HtmlUtils;
 
 
-@Controller
+@RestController
 @Slf4j
 @RequiredArgsConstructor
 public class MessageController {
@@ -29,4 +37,15 @@ public class MessageController {
 
         return new MessageRequest(message.getOttShareRoom(), message.getOttRoomMemberResponse(), escapedMessage);
     }
+
+    /**
+     * 메시지 조회
+     */
+    @GetMapping("/chat/{roomId}/messages")
+    public Page<MessageResponse> getMessages(
+            @PathVariable Long roomId) {
+
+        return messageService.getMessages(roomId);
+    }
+
 }
