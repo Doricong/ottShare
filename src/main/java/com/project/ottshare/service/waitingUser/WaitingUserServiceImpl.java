@@ -73,6 +73,16 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         }
     }
 
+    @Override
+    public WaitingUserResponse findWaitingUserByUserId(Long id) {
+        WaitingUser waitingUser = waitingUserRepository.findWaitingUserByUserId(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        WaitingUserResponse waitingUserResponse = new WaitingUserResponse(waitingUser);
+
+        return waitingUserResponse;
+    }
+
     /**
      * 리더가 있는지 확인
      */
@@ -114,7 +124,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     private int getNonLeaderCountByOtt(OttType ott) {
         return switch (ott) {
             case NETFLIX -> 2;
-            case WAVE, TVING -> 3;
+            case WAVVE, TVING -> 3;
             default -> throw new IllegalArgumentException("Unsupported OttType: " + ott);
         };
     }

@@ -5,6 +5,7 @@ import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.SharingUser;
+import com.project.ottshare.exception.UserNotFoundException;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import com.project.ottshare.service.waitingUser.WaitingUserService;
@@ -71,6 +72,20 @@ public class WaitingUserApiController {
         waitingUserService.deleteUser(matchingId);
 
         return ResponseEntity.ok("User deleted successfully");
+    }
+
+    /**
+     * userId로 user 조회
+     */
+    @GetMapping("/{userId}")
+    public ResponseEntity<Boolean> findWaitingUser(@PathVariable("userId") Long userId) {
+        // waitingUser의 user 조회
+        try {
+            waitingUserService.findWaitingUserByUserId(userId);
+            return ResponseEntity.ok(true);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.ok(false);
+        }
     }
 
 }

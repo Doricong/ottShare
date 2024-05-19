@@ -17,6 +17,8 @@ public interface WaitingUserService {
 
     void deleteUsers(List<WaitingUserResponse> waitingUserResponses);
 
+    WaitingUserResponse findWaitingUserByUserId(Long userId);
+
     WaitingUserResponse findLeaderByOtt(OttType ott);
 
     List<WaitingUserResponse> findNonLeaderByOtt(OttType ott);

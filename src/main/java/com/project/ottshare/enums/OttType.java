@@ -9,7 +9,7 @@ public enum OttType {
 
     NETFLIX("넷플릭스", 9000),
     TVING("티빙", 4250),
-    WAVE("웨이브", 3475);
+    WAVVE("웨이브", 3475);
 
     private final String value;
     private final int price;

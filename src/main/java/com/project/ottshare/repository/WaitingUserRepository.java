@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WaitingUserRepository extends JpaRepository<WaitingUser, Long> {
+
+    Optional<WaitingUser> findWaitingUserByUserId(Long userId);
+
     @Query("SELECT w FROM WaitingUser w WHERE w.ott = :ott AND w.isLeader = true ORDER BY w.createdDate ASC")
     Optional<WaitingUser> findLeadersByOtt(@Param("ott") OttType ott);
 
