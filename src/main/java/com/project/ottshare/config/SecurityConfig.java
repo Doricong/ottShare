@@ -27,17 +27,23 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * 정적 리소스에 대한 요청은 보안 검사 안함
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
+    /**
+     * 보안 설정
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/**", "users/join", "/users/login", "/ott-recommendations", "/faqs").permitAll()
+                        .requestMatchers("users/join", "/users/login", "/ott-recommendations", "/faqs").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

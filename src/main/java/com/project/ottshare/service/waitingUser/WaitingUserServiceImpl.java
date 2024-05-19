@@ -65,9 +65,9 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     @Transactional
     public void deleteUsers(List<WaitingUserResponse> waitingUserResponses) {
         for (WaitingUserResponse waitingUserResponse : waitingUserResponses) {
-            log.info("{}", waitingUserResponse.getId());
             WaitingUser waitingUser = waitingUserRepository.findById(waitingUserResponse.getId())
                     .orElseThrow(() -> new UserNotFoundException(waitingUserResponse.getId()));
+
             //waitingUser 삭제
             waitingUserRepository.delete(waitingUser);
         }
@@ -112,15 +112,10 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     }
 
     private int getNonLeaderCountByOtt(OttType ott) {
-        switch (ott) {
-            case NETFLIX:
-                return 2;
-            case WAVE:
-                return 3;
-            case TVING:
-                return 3;
-            default:
-                throw new IllegalArgumentException("Unsupported OttType: " + ott);
-        }
+        return switch (ott) {
+            case NETFLIX -> 2;
+            case WAVE, TVING -> 3;
+            default -> throw new IllegalArgumentException("Unsupported OttType: " + ott);
+        };
     }
 }

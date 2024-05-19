@@ -26,6 +26,9 @@ public class UserServiceImpl implements UserService{
     private final BCryptPasswordEncoder encoder;
     private final SmsCertificationDao smsCertificationDao;
 
+    /**
+     * 회원가입
+     */
     @Override
     @Transactional
     public Long joinUser(UserRequest userRequest) {
@@ -60,6 +63,9 @@ public class UserServiceImpl implements UserService{
         return user.getUsername();
     }
 
+    /**
+     * 비밀번호 찾기
+     */
     @Override
     public void UserVerificationService(String name, String username, String email) {
         userRepository.findByNameAndUsernameAndEmail(name, username, email)
@@ -83,7 +89,6 @@ public class UserServiceImpl implements UserService{
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
 
         user.updatePassword(encoder.encode(password));
-
     }
 
     @Override
@@ -111,8 +116,7 @@ public class UserServiceImpl implements UserService{
         String verificationCode = UUID.randomUUID().toString().substring(0, 6); // 무작위 인증 코드 생성
         log.info("verificationCode={}", verificationCode);
         smsUtil.sendOne(phoneNum, verificationCode);
-//
-//        //생성된 인증번호를 Redis에 저장
+        //생성된 인증번호를 Redis에 저장
         smsCertificationDao.createSmsCertification(phoneNum,verificationCode);
     }
 

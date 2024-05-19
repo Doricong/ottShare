@@ -28,7 +28,6 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     @Override
     @Transactional
     public Long save(OttSharingRoomRequest ottSharingRoomRequests) {
-
         OttShareRoom entity = ottSharingRoomRequests.toEntity();
 
         OttShareRoom savedOttShareRoom = ottShareRoomRepository.save(entity);

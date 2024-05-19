@@ -6,7 +6,6 @@ import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.exception.OttSharingRoomNotFoundException;
-import com.project.ottshare.repository.OttShareRoomRepository;
 import com.project.ottshare.repository.SharingUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +21,7 @@ import java.util.List;
 @Slf4j
 public class SharingUserServiceImpl implements SharingUserService{
 
-    private final OttShareRoomRepository ottShareRoomRepository;
     private final SharingUserRepository sharingUserRepository;
-
 
     @Override
     @Transactional
@@ -42,9 +39,7 @@ public class SharingUserServiceImpl implements SharingUserService{
     @Transactional
     public void associateRoomWithSharingUsers(List<SharingUser> sharingUsers, OttShareRoomResponse room) {
         for (SharingUser sharingUser : sharingUsers) {
-            log.info("room={}", room.getId());
             OttShareRoom entity = room.toEntity();
-            log.info("room2={}", entity.getId());
             sharingUser.addRoom(entity);
         }
     }

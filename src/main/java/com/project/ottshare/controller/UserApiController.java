@@ -8,6 +8,7 @@ import com.project.ottshare.validation.CustomValidators;
 import com.project.ottshare.validation.ValidationSequence;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,31 +41,15 @@ public class UserApiController {
     public ResponseEntity<?> login(@RequestBody LoginUserRequest user) {
         // 입력받은 아이디로 사용자 조회
         CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(user.getUsername());
-        boolean isUser = userService.authenticateUser(userDetails.getPassword(), user.getPassword());
-
-        if (isUser) {
-            UserInfo userInfo = new UserInfo(
-                    userDetails.getId(),
-                    userDetails.getUsername(),
-                    userDetails.getPassword(),
-                    userDetails.getNickname(),
-                    userDetails.getEmail(),
-                    userDetails.getName(),
-                    userDetails.getPhoneNumber(),
-                    userDetails.getBank(),
-                    userDetails.getAccount(),
-                    userDetails.getAccountHolder(),
-                    userDetails.getRole(),
-                    userDetails.isShareRoom() // 이 부분 수정
-            );
-
-            return ResponseEntity.ok(userInfo);
-        } else {
+        // 비밀번호 검증
+        if (userService.authenticateUser(userDetails.getPassword(), user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호입니다.");
         }
+
+        UserInfo userInfo = new UserInfo(userDetails);
+
+        return ResponseEntity.ok(userInfo);
     }
-
-
 
     /**
      * 로그아웃
@@ -86,14 +71,13 @@ public class UserApiController {
                                            BindingResult bindingResult) {
         //유효성 검사
         validators.joinValidateAll(dto, bindingResult);
-        log.info("dto={}", dto.getRole());
         if (bindingResult.hasErrors()) {
             // 유효성 검사 실패 시 오류 메시지 반환
             List<String> errorMessages = bindingResult.getAllErrors()
                     .stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.toList());
-            log.info("errormessage={}", errorMessages);
+
             return ResponseEntity.badRequest().body(errorMessages);
         }
 
@@ -115,7 +99,6 @@ public class UserApiController {
 
     /**
      * 회원정보 수정
-     * todo: 테스트 필요
      */
     @GetMapping("/{userId}/modification")
     public ResponseEntity<UserResponse> modify(@PathVariable("userId") Long userId) {
@@ -185,6 +168,7 @@ public class UserApiController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
     /**
      * 비밀번호 찾기
      */
