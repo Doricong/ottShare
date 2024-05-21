@@ -12,10 +12,8 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
 
@@ -44,6 +42,8 @@ public class MessageController {
     @GetMapping("/chat/{roomId}/messages")
     public Page<MessageResponse> getMessages(
             @PathVariable Long roomId) {
+
+        log.info("/chat/{roomId}/messages 호출");
 
         return messageService.getMessages(roomId);
     }

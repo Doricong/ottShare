@@ -5,8 +5,12 @@ import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQResponse;
 import com.project.ottshare.enums.OttType;
 import com.project.ottshare.service.ottRecommendation.OttRecQServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ public class OttRecQuestionsApiController {
 
     @GetMapping("/1")
     public ResponseEntity<OttRecQResponse> getfirstOttRecommendQuestions() {
+
+
         // 점수 모두 0으로 초기화
         netflix = 0;
         tiving = 0;
