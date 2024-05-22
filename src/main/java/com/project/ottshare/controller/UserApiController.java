@@ -45,7 +45,6 @@ public class UserApiController {
         if (!userService.authenticateUser(userDetails.getPassword(), user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호입니다.");
         }
-
         UserInfo userInfo = new UserInfo(userDetails);
 
         return ResponseEntity.ok(userInfo);
