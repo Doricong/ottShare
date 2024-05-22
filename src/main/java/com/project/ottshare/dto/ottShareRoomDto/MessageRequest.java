@@ -1,5 +1,7 @@
 package com.project.ottshare.dto.ottShareRoomDto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ottshare.dto.sharingUserDto.OttRoomMemberResponse;
 import com.project.ottshare.entity.Message;
 import com.project.ottshare.entity.OttShareRoom;
@@ -8,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,4 +35,13 @@ public class MessageRequest {
                 .message(message)
                 .build();
     }
+
+//    @JsonCreator
+//    public MessageRequest(@JsonProperty("ottShareRoom") OttShareRoomResponse ottShareRoom,
+//                                     @JsonProperty("ottRoomMemberResponse") OttRoomMemberResponse ottRoomMemberResponse,
+//                                     @JsonProperty("message") String message) {
+//        this.ottShareRoom = ottShareRoom;
+//        this.ottRoomMemberResponse = ottRoomMemberResponse;
+//        this.message = message;
+//    }
 }

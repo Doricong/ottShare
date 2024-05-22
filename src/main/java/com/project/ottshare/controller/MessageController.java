@@ -2,6 +2,8 @@ package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
 import com.project.ottshare.dto.ottShareRoomDto.MessageResponse;
+import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
+import com.project.ottshare.dto.sharingUserDto.OttRoomMemberResponse;
 import com.project.ottshare.service.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

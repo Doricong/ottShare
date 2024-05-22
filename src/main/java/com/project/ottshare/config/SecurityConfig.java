@@ -43,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("users/join", "/users/login", "/api/**","/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**").permitAll()
+                        .requestMatchers("/ws/**","/users/join", "/users/login", "/api/**","/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

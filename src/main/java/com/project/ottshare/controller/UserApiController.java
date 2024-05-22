@@ -42,7 +42,7 @@ public class UserApiController {
         // 입력받은 아이디로 사용자 조회
         CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(user.getUsername());
         // 비밀번호 검증
-        if (userService.authenticateUser(userDetails.getPassword(), user.getPassword())){
+        if (!userService.authenticateUser(userDetails.getPassword(), user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 비밀번호입니다.");
         }
 

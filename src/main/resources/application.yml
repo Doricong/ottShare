@@ -58,3 +58,9 @@ coolsms:
   api:
     key: "NCSNE0EKVTZAUCCY"
     secret: "V1SHVAWC0NI4DN9YE1LP3FTN12WSBHG6"
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
+      force-request: true
