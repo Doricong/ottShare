@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    Page<Message> findAllByOttShareRoomId(Long roomId, Pageable pageable);
+    Page<Message> findAllByOttShareRoomIdOrderByCreatedDate(Long roomId, Pageable pageable);
 }

@@ -34,7 +34,7 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public Page<MessageResponse> getMessages(Long roomId) {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
-        Page<Message> messages = messageRepository.findAllByOttShareRoomId(roomId, pageable);
+        Page<Message> messages = messageRepository.findAllByOttShareRoomIdOrderByCreatedDate(roomId, pageable);
         return messages.map(this::convertToDto);
     }
 
