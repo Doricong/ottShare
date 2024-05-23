@@ -9,5 +9,5 @@ public interface SharingUserRepository extends JpaRepository<SharingUser, Long> 
 
     Optional<SharingUser> findSharingUserById(Long id);
 
-    Optional<SharingUser> findByUserId(Long userId);
+    Optional<SharingUser> findByUserUserId(Long userId);
 }

@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService{
         //user 저장
         userRepository.save(user);
 
-        return user.getId();
+        return user.getUserId();
     }
 
     @Override

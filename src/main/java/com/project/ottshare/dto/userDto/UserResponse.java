@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 public class UserResponse {
 
-    private Long id;
+    private Long userId;
 
     private String name;
 
@@ -38,7 +38,7 @@ public class UserResponse {
     private boolean isShareRoom;
 
     public UserResponse(User user) {
-        this.id = user.getId();
+        this.userId = user.getUserId();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.email = user.getEmail();
@@ -53,7 +53,7 @@ public class UserResponse {
 
     public User toEntity() {
         return User.builder()
-                .id(id)
+                .userId(userId)
                 .username(username)
                 .password(password)
                 .email(email)

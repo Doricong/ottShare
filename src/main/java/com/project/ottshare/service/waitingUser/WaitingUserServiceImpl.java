@@ -75,7 +75,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
 
     @Override
     public WaitingUserResponse findWaitingUserByUserId(Long id) {
-        WaitingUser waitingUser = waitingUserRepository.findWaitingUserByUserId(id)
+        WaitingUser waitingUser = waitingUserRepository.findWaitingUserByUserUserId(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         WaitingUserResponse waitingUserResponse = new WaitingUserResponse(waitingUser);

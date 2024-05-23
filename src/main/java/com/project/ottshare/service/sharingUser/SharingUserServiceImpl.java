@@ -46,7 +46,7 @@ public class SharingUserServiceImpl implements SharingUserService{
 
     @Override
     public SharingUserResponse getSharingUser(Long userId) {
-        SharingUser sharingUser = sharingUserRepository.findByUserId(userId)
+        SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(userId));
 
         SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
