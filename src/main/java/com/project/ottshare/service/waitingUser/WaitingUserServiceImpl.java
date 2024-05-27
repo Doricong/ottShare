@@ -43,6 +43,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         //waitingUserRequest -> waitingUser
         WaitingUser waitingUser = waitingUserRequest.toEntity(user);
         //waitingUser 저장
+        log.info("ott={}", waitingUser.getOtt());
         waitingUserRepository.save(waitingUser);
     }
 

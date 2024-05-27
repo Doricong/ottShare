@@ -34,7 +34,7 @@ public class WaitingUserApiController {
     @PostMapping("/save")
     public ResponseEntity<String> saveWaitingUser(@Validated(ValidationSequence.class) @RequestBody WaitingUserRequest dto) {
         // 사용자 정보 저장
-        log.info("Saving user data: {}", dto.getUserInfo().getUsername());
+        log.info("Saving user data: {}", dto.getOtt());
         waitingUserService.saveUser(dto);
 
         // 해당 OTT 서비스의 리더와 비리더 멤버를 확인하고 모든 조건이 충족되면 방을 생성

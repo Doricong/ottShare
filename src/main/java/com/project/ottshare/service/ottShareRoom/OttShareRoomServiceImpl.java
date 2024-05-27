@@ -1,10 +1,12 @@
 package com.project.ottshare.service.ottShareRoom;
 
+import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.exception.OttSharingRoomNotFoundException;
+import com.project.ottshare.exception.SharingUserNotCheckedException;
 import com.project.ottshare.exception.SharingUserNotFoundException;
 import com.project.ottshare.repository.OttShareRoomRepository;
 import com.project.ottshare.repository.SharingUserRepository;
@@ -74,6 +76,9 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
         //todo: 대기방에 추가해야 함
     }
 
+    /**
+     * 체크기능
+     */
     @Override
     @Transactional
     public void checkUser(Long roomId, Long userId) {
@@ -86,5 +91,24 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
         sharingUser.checked();
     }
 
+    /**
+     * 아이디, 비밀번호 확인
+     */
+    @Override
+    public OttShareRoomIdAndPasswordResponse idAndPassword(Long roomId, Long userId) {
+        OttShareRoom ottShareRoom = ottShareRoomRepository.findById(roomId)
+                .orElseThrow(() -> new OttSharingRoomNotFoundException(roomId));
+
+        SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new SharingUserNotFoundException(userId));
+
+        if (sharingUser.isChecked()) {
+            throw new SharingUserNotCheckedException(userId);
+        }
+
+        OttShareRoomIdAndPasswordResponse ottShareRoomIdAndPasswordResponse = new OttShareRoomIdAndPasswordResponse(ottShareRoom.getOttId(), ottShareRoom.getOttPassword());
+
+        return ottShareRoomIdAndPasswordResponse;
+    }
 
 }
