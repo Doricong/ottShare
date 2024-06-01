@@ -4,12 +4,14 @@ import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
+import com.project.ottshare.service.ottShareRoom.OttShareRoomServiceImpl;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +32,15 @@ public class OttShareRoomApiController {
         OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(sharingUser.getOttShareRoom().getId());
 
         return ResponseEntity.ok(ottShareRoom);
+    }
+
+    /**
+     * 체크
+     */
+    @PostMapping("/{roomId}/user/{userId}/check")
+    public ResponseEntity getOttShareRoom(@PathVariable("roomId") Long roomId, @PathVariable("userId") Long userId) {
+        ottShareRoomService.checkUser(roomId, userId);
+        return ResponseEntity.ok().build();
     }
 
     /**
