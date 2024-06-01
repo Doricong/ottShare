@@ -4,7 +4,7 @@ import com.project.ottshare.dto.userDto.*;
 
 public interface UserService {
 
-    Long joinUser(UserRequest userRequest);
+    Long save(UserRequest userRequest);
 
     UserResponse getUser(Long id);
 
@@ -14,7 +14,7 @@ public interface UserService {
 
     void updateUser(UserSimpleRequest userSimpleRequest);
 
-    void updateUserPassword(String name, String email, String password);
+    void updatePassword(String name, String email, String password);
 
     void deleteUser(Long id);
 

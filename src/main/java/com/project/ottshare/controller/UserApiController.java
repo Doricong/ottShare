@@ -8,7 +8,6 @@ import com.project.ottshare.validation.CustomValidators;
 import com.project.ottshare.validation.ValidationSequence;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -67,7 +65,7 @@ public class UserApiController {
      */
     @PostMapping("/join")
     public ResponseEntity<?> joinUser(@Validated(ValidationSequence.class) @RequestBody UserRequest dto,
-                                           BindingResult bindingResult) {
+                                      BindingResult bindingResult) {
         //유효성 검사
         validators.joinValidateAll(dto, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -81,7 +79,7 @@ public class UserApiController {
         }
 
         // 회원 저장
-        userService.joinUser(dto);
+        userService.save(dto);
 
         return ResponseEntity.ok("User registered successfully");
     }
@@ -123,7 +121,6 @@ public class UserApiController {
                     .collect(Collectors.toList());
             return ResponseEntity.badRequest().body(errorMessages);
         }
-
         //회원 수정
         userService.updateUser(dto);
 
@@ -185,7 +182,7 @@ public class UserApiController {
         FindPasswordResponse response = new FindPasswordResponse("임시 비밀번호는" + temporaryPassword + "입니다.");
 
         // 임시 비밀번호로 변경
-        userService.updateUserPassword(name, email, temporaryPassword);
+        userService.updatePassword(name, email, temporaryPassword);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

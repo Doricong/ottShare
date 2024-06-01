@@ -28,7 +28,8 @@ public class MessageController {
 
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/messages/{roomId}")
-    public MessageRequest handleChatMessage(MessageRequest message, @DestinationVariable Long roomId) throws InterruptedException {
+    public MessageRequest handleChatMessage(MessageRequest message,
+                                            @DestinationVariable Long roomId) throws InterruptedException {
         Thread.sleep(1000);
         log.info("message={}", message.getMessage());
         String escapedMessage = HtmlUtils.htmlEscape(message.getMessage());
@@ -42,11 +43,7 @@ public class MessageController {
      * 메시지 조회
      */
     @GetMapping("/chat/{roomId}/messages")
-    public Page<MessageResponse> getMessages(
-            @PathVariable Long roomId) {
-
-        log.info("/chat/{roomId}/messages 호출");
-
+    public Page<MessageResponse> getMessages(@PathVariable Long roomId) {
         return messageService.getMessages(roomId);
     }
 

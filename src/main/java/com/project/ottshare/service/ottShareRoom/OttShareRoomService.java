@@ -10,7 +10,7 @@ public interface OttShareRoomService {
 
     OttShareRoomResponse getOttShareRoom(Long id);
 
-    void delete(Long id);
+    void removeOttShareRoom(Long id);
 
     void expelUser(Long roomId, Long userId);
 

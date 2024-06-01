@@ -36,7 +36,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
      */
     @Override
     @Transactional
-    public void saveUser(WaitingUserRequest waitingUserRequest) {
+    public void save(WaitingUserRequest waitingUserRequest) {
         User user = userRepository.findByUsername(waitingUserRequest.getUserInfo().getUsername())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을수 없습니다."));
 
@@ -75,7 +75,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     }
 
     @Override
-    public WaitingUserResponse findWaitingUserByUserId(Long id) {
+    public WaitingUserResponse getWaitingUserByUserId(Long id) {
         WaitingUser waitingUser = waitingUserRepository.findWaitingUserByUserUserId(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
@@ -88,7 +88,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
      * 리더가 있는지 확인
      */
     @Override
-    public WaitingUserResponse findLeaderByOtt(OttType ott) {
+    public WaitingUserResponse getLeaderByOtt(OttType ott) {
         WaitingUser waitingUser = waitingUserRepository.findLeadersByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
@@ -101,7 +101,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
      * 리더가 아닌 user가 모두 있는지 확인
      */
     @Override
-    public List<WaitingUserResponse> findNonLeaderByOtt(OttType ott) {
+    public List<WaitingUserResponse> getNonLeaderByOtt(OttType ott) {
         int nonLeaderCount = getNonLeaderCountByOtt(ott);
         Pageable pageRequest = PageRequest.of(0, nonLeaderCount);
 

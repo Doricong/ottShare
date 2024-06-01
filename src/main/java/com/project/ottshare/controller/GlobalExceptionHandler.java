@@ -41,13 +41,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The OTT non-leader was not found");
     }
 
-    //OTT 공유 방을 찾을 수 없는 경우를 처리ㅎ하는 핸들러
+    //OTT 공유 방을 찾을 수 없는 경우를 처리하는 핸들러
     @ExceptionHandler(OttSharingRoomNotFoundException.class)
     public ResponseEntity<Object> handleOttSharingRoomNotFoundException(OttSharingRoomNotFoundException ex) {
         log.warn("OTT 공유 방을 찾을 수 없습니다.", ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("OTT 공유 방을 찾을 수 없습니다.");
     }
 
+    //OTT 질문을 찾을 수 업는 경우를 처리하는 핸들러
+    @ExceptionHandler(OttRecQNotFoundException.class)
+    public ResponseEntity<Object> handleOttRecQNotFoundException(OttRecQNotFoundException ex) {
+        log.warn("OTT 질문을 찾을 수 없습니다.", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("OTT 질문을 찾을 수 없습니다.");
+    }
 
+    //OTT 방의 체크가 안 되어 있는 경우를 처리하는 핸들러
+    @ExceptionHandler(SharingUserNotCheckedException.class)
+    public ResponseEntity<Object> handleSharingUserNotCheckedException(SharingUserNotCheckedException ex) {
+        log.warn("OTT 방의 체크가 안 되어 있습니다.", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("OTT 방의 체크가 안 되어 있습니다.");
+    }
+
+    //OTT 방을 찾을 수 없습니댜,
+    @ExceptionHandler(SharingUserNotFoundException.class)
+    public ResponseEntity<Object> handleSharingUserNotFoundException(SharingUserNotFoundException ex) {
+        log.warn("OTT 방을 찾을 수 없습니다.", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("OTT 방을 찾을 수 없습니다.");
+    }
 
 }

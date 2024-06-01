@@ -52,7 +52,7 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
      */
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void removeOttShareRoom(Long id) {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
 

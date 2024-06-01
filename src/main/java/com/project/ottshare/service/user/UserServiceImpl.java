@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     @Transactional
-    public Long joinUser(UserRequest userRequest) {
+    public Long save(UserRequest userRequest) {
         //password 인코딩
         userRequest.setPassword(encoder.encode(userRequest.getPassword()));
 
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public void updateUserPassword(String name, String email, String password) {
+    public void updatePassword(String name, String email, String password) {
         User user = userRepository.findByNameAndEmail(name, email)
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
 

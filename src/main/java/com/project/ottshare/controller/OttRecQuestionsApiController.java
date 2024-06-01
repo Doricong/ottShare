@@ -5,12 +5,8 @@ import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQResponse;
 import com.project.ottshare.enums.OttType;
 import com.project.ottshare.service.ottRecommendation.OttRecQServiceImpl;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +19,7 @@ public class OttRecQuestionsApiController {
     OttType resultOtt = OttType.NETFLIX;
 
     @GetMapping("/1")
-    public ResponseEntity<OttRecQResponse> getfirstOttRecommendQuestions() {
-
-
+    public ResponseEntity<OttRecQResponse> getFirstOttRecommendQuestions() {
         // 점수 모두 0으로 초기화
         netflix = 0;
         tiving = 0;
@@ -46,7 +40,8 @@ public class OttRecQuestionsApiController {
     }
 
     @PostMapping("/{id}")
-    public void countScore(@PathVariable Long id, @RequestBody OttRecQRequest ottRecQRequest) {
+    public void countScore(@PathVariable Long id,
+                           @RequestBody OttRecQRequest ottRecQRequest) {
         Boolean isFirstQuestion = ottRecQRequest.getIsFirstQuestion();
 
         if (isFirstQuestion) {
@@ -74,7 +69,7 @@ public class OttRecQuestionsApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OttRecQResponse> getottRecommendQuestions(@PathVariable Long id) {
+    public ResponseEntity<OttRecQResponse> getOttRecommendQuestions(@PathVariable Long id) {
         OttRecQResponse ottRecQuestions = ottRecQService.getOttRecQuestions(id);
 
         return ResponseEntity.ok(ottRecQuestions);

@@ -35,11 +35,11 @@ public class WaitingUserApiController {
     public ResponseEntity<String> saveWaitingUser(@Validated(ValidationSequence.class) @RequestBody WaitingUserRequest dto) {
         // 사용자 정보 저장
         log.info("Saving user data: {}", dto.getOtt());
-        waitingUserService.saveUser(dto);
+        waitingUserService.save(dto);
 
         // 해당 OTT 서비스의 리더와 비리더 멤버를 확인하고 모든 조건이 충족되면 방을 생성
-        List<WaitingUserResponse> member = waitingUserService.findNonLeaderByOtt(dto.getOtt());
-        WaitingUserResponse leader = waitingUserService.findLeaderByOtt(dto.getOtt());
+        List<WaitingUserResponse> member = waitingUserService.getNonLeaderByOtt(dto.getOtt());
+        WaitingUserResponse leader = waitingUserService.getLeaderByOtt(dto.getOtt());
         member.add(leader); // 리더 정보를 리스트에 추가
 
         // 인원 수가 충분하면 자동 매칭 대기방에서 사용자 삭제 및 방을 생성
@@ -53,8 +53,6 @@ public class WaitingUserApiController {
 
         Long savedOttShareRoomId = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
         OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(savedOttShareRoomId);
-
-        log.info("AA={}", ottShareRoom.getId());
 
         sharingUserService.associateRoomWithSharingUsers(sharingUsers, ottShareRoom);
 
@@ -81,7 +79,7 @@ public class WaitingUserApiController {
     public ResponseEntity<Boolean> findWaitingUser(@PathVariable("userId") Long userId) {
         // waitingUser의 user 조회
         try {
-            waitingUserService.findWaitingUserByUserId(userId);
+            waitingUserService.getWaitingUserByUserId(userId);
             return ResponseEntity.ok(true);
         } catch (UserNotFoundException e) {
             return ResponseEntity.ok(false);
