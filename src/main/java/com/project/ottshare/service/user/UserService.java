@@ -1,6 +1,9 @@
 package com.project.ottshare.service.user;
 
 import com.project.ottshare.dto.userDto.*;
+import com.project.ottshare.entity.User;
+
+import java.util.Optional;
 
 public interface UserService {
 
@@ -23,4 +26,6 @@ public interface UserService {
     void verifySms(CheckCodeRequest checkCodeRequest);
 
     boolean authenticateUser(String userDetailsPassword, String password);
+
+    Optional<User> findUserByEmail(String email);
 }

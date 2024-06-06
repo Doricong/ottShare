@@ -43,7 +43,6 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         //waitingUserRequest -> waitingUser
         WaitingUser waitingUser = waitingUserRequest.toEntity(user);
         //waitingUser 저장
-        log.info("ott={}", waitingUser.getOtt());
         waitingUserRepository.save(waitingUser);
     }
 
@@ -89,7 +88,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
      */
     @Override
     public WaitingUserResponse getLeaderByOtt(OttType ott) {
-        WaitingUser waitingUser = waitingUserRepository.findLeadersByOtt(ott)
+        WaitingUser waitingUser = waitingUserRepository.findLeaderByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
         WaitingUserResponse waitingUserResponse = new WaitingUserResponse(waitingUser);
@@ -103,9 +102,8 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     @Override
     public List<WaitingUserResponse> getNonLeaderByOtt(OttType ott) {
         int nonLeaderCount = getNonLeaderCountByOtt(ott);
-        Pageable pageRequest = PageRequest.of(0, nonLeaderCount);
 
-        List<WaitingUser> waitingUsers = waitingUserRepository.findNonLeadersByOtt(ott, pageRequest);
+        List<WaitingUser> waitingUsers = waitingUserRepository.findNonLeadersByOtt(ott, nonLeaderCount);
 
         //리더가 아닌 user가 모두 있는지 확인
         if (waitingUsers.size() != nonLeaderCount) {

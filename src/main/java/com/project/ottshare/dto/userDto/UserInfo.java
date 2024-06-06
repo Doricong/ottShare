@@ -1,5 +1,6 @@
 package com.project.ottshare.dto.userDto;
 
+import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.BankType;
 import com.project.ottshare.enums.Role;
 import com.project.ottshare.security.auth.CustomUserDetails;
@@ -42,5 +43,34 @@ public class UserInfo {
         this.isShareRoom = userDetails.isShareRoom();
     }
 
+    public UserInfo(User user) {
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.nickname = user.getNickname();
+        this.email = user.getEmail();
+        this.name = user.getName();
+        this.phoneNumber = user.getPhoneNumber();
+        this.bank = user.getBank();
+        this.account = user.getAccount();
+        this.accountHolder = user.getAccountHolder();
+        this.role = user.getRole();
+        this.isShareRoom = user.isShareRoom();
+    }
+
+    public UserRequest toUserRequest() {
+        return UserRequest.builder()
+                .username(this.username)
+                .password(this.password)
+                .nickname(this.nickname)
+                .email(this.email)
+                .name(this.name)
+                .phoneNumber(this.phoneNumber)
+                .bank(this.bank)
+                .account(this.account)
+                .accountHolder(this.accountHolder)
+                .role(this.role)
+                .build();
+    }
 
 }

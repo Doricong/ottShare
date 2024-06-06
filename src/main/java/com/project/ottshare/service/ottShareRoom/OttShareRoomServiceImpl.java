@@ -65,11 +65,9 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     @Override
     @Transactional
     public void expelUser(Long roomId,Long userId) {
-        OttShareRoom ottShareRoom = ottShareRoomRepository.findById(roomId)
-                .orElseThrow(() -> new OttSharingRoomNotFoundException(roomId));
-
-        SharingUser sharingUser = sharingUserRepository.findSharingUserById(userId)
+        SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException("User not found in the room"));
+        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
 
         //user 제거
         ottShareRoom.removeUser(sharingUser);
@@ -82,10 +80,7 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     @Override
     @Transactional
     public void checkUser(Long roomId, Long userId) {
-        ottShareRoomRepository.findById(roomId)
-                .orElseThrow(() -> new OttSharingRoomNotFoundException(roomId));
-
-        SharingUser sharingUser = sharingUserRepository.findSharingUserById(userId)
+        SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
         sharingUser.checked();
@@ -96,11 +91,10 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
      */
     @Override
     public OttShareRoomIdAndPasswordResponse idAndPassword(Long roomId, Long userId) {
-        OttShareRoom ottShareRoom = ottShareRoomRepository.findById(roomId)
-                .orElseThrow(() -> new OttSharingRoomNotFoundException(roomId));
-
-        SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
+        SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
+
+        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
 
         if (sharingUser.isChecked()) {
             throw new SharingUserNotCheckedException(userId);

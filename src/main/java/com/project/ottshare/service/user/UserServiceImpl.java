@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -135,6 +136,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean authenticateUser(String userDetailsPassword, String password) {
         return encoder.matches(password, userDetailsPassword);
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     private boolean isVerify(CheckCodeRequest findUsernameRequest) {
