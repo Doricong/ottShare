@@ -33,7 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         //OAuth2UserInfo 객체를 기반으로 사용자를 생성
         User user = createUserFromUserInfo(userInfo);
 
-        if (!userRepository.existsByEmail(user.getEmail())) {
+        if (!userRepository.existsByUsername(user.getUsername())) {
             userRepository.save(user);
         }
 
