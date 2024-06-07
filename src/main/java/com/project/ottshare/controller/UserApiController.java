@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.BindingResult;
@@ -188,28 +189,6 @@ public class UserApiController {
         userService.updatePassword(name, email, temporaryPassword);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PostMapping("/google-login")
-    public ResponseEntity<?> googleLogin(@RequestBody UserInfo userInfo, HttpServletRequest request) {
-        String email = userInfo.getEmail();
-        Optional<User> existingUser = userService.findUserByEmail(email);
-
-        if (existingUser.isPresent()) {
-            // 기존 사용자가 존재할 경우, 일반 로그인 사용자인지 확인합니다.
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 이메일입니다. 일반 로그인을 사용하세요.");
-        } else {
-            // 사용자가 존재하지 않으면 회원가입 처리
-            userService.save(userInfo.toUserRequest());
-            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
-
-            // 세션에 사용자 정보 저장
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-
-            return ResponseEntity.ok(new UserInfo(userDetails.getUser()));
-        }
     }
 
 }

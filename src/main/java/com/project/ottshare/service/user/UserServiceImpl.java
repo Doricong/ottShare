@@ -138,10 +138,6 @@ public class UserServiceImpl implements UserService{
         return encoder.matches(password, userDetailsPassword);
     }
 
-    @Override
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
 
     private boolean isVerify(CheckCodeRequest findUsernameRequest) {
         return smsCertificationDao.hasKey(findUsernameRequest.getPhoneNumber()) &&

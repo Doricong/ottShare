@@ -26,6 +26,4 @@ public interface UserService {
     void verifySms(CheckCodeRequest checkCodeRequest);
 
     boolean authenticateUser(String userDetailsPassword, String password);
-
-    Optional<User> findUserByEmail(String email);
 }
