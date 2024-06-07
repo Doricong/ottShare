@@ -2,6 +2,7 @@ package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.userDto.*;
 import com.project.ottshare.entity.User;
+import com.project.ottshare.enums.Role;
 import com.project.ottshare.security.auth.CustomUserDetails;
 import com.project.ottshare.security.auth.CustomUserDetailsService;
 import com.project.ottshare.service.user.UserService;
@@ -196,6 +197,9 @@ public class UserApiController {
         Optional<User> existingUser = userService.findUserByEmail(email);
 
         if (existingUser.isPresent()) {
+            if (existingUser.get().getRole() == Role.SOCIAL) {
+                return ResponseEntity.ok(userInfo);
+            }
             // 기존 사용자가 존재할 경우, 일반 로그인 사용자인지 확인합니다.
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 이메일입니다. 일반 로그인을 사용하세요.");
         } else {
@@ -204,9 +208,9 @@ public class UserApiController {
             CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
 
             // 세션에 사용자 정보 저장
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+//            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
             return ResponseEntity.ok(new UserInfo(userDetails.getUser()));
         }
