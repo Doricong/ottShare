@@ -14,6 +14,8 @@ public interface OttShareRoomService {
 
     void expelUser(Long roomId, Long userId);
 
+    void leaveRoom(Long roomId, Long userId);
+
     void checkUser(Long roomId, Long userId);
 
     OttShareRoomIdAndPasswordResponse idAndPassword(Long roomId, Long userId);

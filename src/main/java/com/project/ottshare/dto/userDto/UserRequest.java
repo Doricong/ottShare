@@ -27,7 +27,7 @@ public class UserRequest {
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.", groups = NotBlankGroups.class)
     @Range(min = 8, max = 16, message = "비밀번호는 8~16자 사이로 입력해주세요.", groups = RangeGroups.class)
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?!.*\\s).{8,16}$", message = "비밀번호는 영문, 숫자, 특수문자 모두 포함해주세요.", groups = PatternGroups.class)
+//    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?!.*\\s).{8,16}$", message = "비밀번호는 영문, 숫자, 특수문자 모두 포함해주세요.", groups = PatternGroups.class)
     private String password;
 
     @NotBlank(message = "닉네임은 필수 입력 값입니다.", groups = NotBlankGroups.class)
