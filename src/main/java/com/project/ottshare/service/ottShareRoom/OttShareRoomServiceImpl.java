@@ -71,7 +71,19 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
 
         //user 제거
         ottShareRoom.removeUser(sharingUser);
-        //todo: 대기방에 추가해야 함
+        //todo: 대기방에 있는 맴버 추가해야 함
+    }
+
+    @Override
+    @Transactional
+    public void leaveRoom(Long roomId, Long userId) {
+        SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
+                .orElseThrow(() -> new OttSharingRoomNotFoundException("User not found in the room"));
+        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
+
+        //user 제거
+        ottShareRoom.removeUser(sharingUser);
+        //todo: 대기방에 있는 맴버 추가해야 함
     }
 
     /**
