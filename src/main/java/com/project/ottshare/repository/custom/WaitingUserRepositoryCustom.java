@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface WaitingUserRepositoryCustom {
     Optional<WaitingUser> findLeaderByOtt(OttType ott);
     List<WaitingUser> findNonLeadersByOtt(OttType ott, int limit);
+    boolean existsByUserId(Long userId);
 }

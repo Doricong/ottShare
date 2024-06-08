@@ -73,14 +73,8 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         }
     }
 
-    @Override
-    public WaitingUserResponse getWaitingUserByUserId(Long id) {
-        WaitingUser waitingUser = waitingUserRepository.findWaitingUserByUserUserId(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
-        WaitingUserResponse waitingUserResponse = new WaitingUserResponse(waitingUser);
-
-        return waitingUserResponse;
+    public boolean existsByUserId(Long userId) {
+        return waitingUserRepository.existsByUserId(userId);
     }
 
     /**

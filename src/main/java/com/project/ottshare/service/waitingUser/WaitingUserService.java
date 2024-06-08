@@ -15,7 +15,7 @@ public interface WaitingUserService {
 
     void deleteUsers(List<WaitingUserResponse> waitingUserResponses);
 
-    WaitingUserResponse getWaitingUserByUserId(Long userId);
+    boolean existsByUserId(Long userId);
 
     WaitingUserResponse getLeaderByOtt(OttType ott);
 

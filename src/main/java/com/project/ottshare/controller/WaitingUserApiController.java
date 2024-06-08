@@ -12,6 +12,7 @@ import com.project.ottshare.service.waitingUser.WaitingUserService;
 import com.project.ottshare.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -77,13 +78,10 @@ public class WaitingUserApiController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<Boolean> findWaitingUser(@PathVariable("userId") Long userId) {
-        // waitingUser의 user 조회
-        try {
-            waitingUserService.getWaitingUserByUserId(userId);
+        if (waitingUserService.existsByUserId(userId)) {
             return ResponseEntity.ok(true);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.ok(false);
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
     }
 
 }
