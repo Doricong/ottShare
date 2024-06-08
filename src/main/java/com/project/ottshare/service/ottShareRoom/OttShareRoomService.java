@@ -19,4 +19,6 @@ public interface OttShareRoomService {
     void checkUser(Long roomId, Long userId);
 
     OttShareRoomIdAndPasswordResponse idAndPassword(Long roomId, Long userId);
+
+    boolean findNewMember(Long roomId);
 }

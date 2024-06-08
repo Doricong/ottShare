@@ -3,6 +3,7 @@ package com.project.ottshare.controller;
 import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
+import com.project.ottshare.repository.WaitingUserRepository;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,11 @@ public class OttShareRoomApiController {
     @DeleteMapping("/{roomId}/user/{userId}/leave")
     public ResponseEntity<Void> leaveRoom(@PathVariable("roomId") Long roomId,
                                           @PathVariable("userId") Long userId) {
+        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId);
+        //나가는 사람이 리더면 공유방 제거
+        if (sharingUser.isLeader()) {
+            ottShareRoomService.removeOttShareRoom(roomId);
+        }
         ottShareRoomService.leaveRoom(roomId, userId);
         return ResponseEntity.ok().build();
     }
@@ -75,4 +81,13 @@ public class OttShareRoomApiController {
         return ResponseEntity.ok(ottShareRoomIdAndPasswordResponse);
     }
 
+    /**
+     * 새로운 맴버 찾기
+     */
+    @GetMapping("/{roomId}/findNewMember")
+    public ResponseEntity<String> findNewMember(@PathVariable("roomId") Long roomId) {
+        boolean newMemberFound = ottShareRoomService.findNewMember(roomId);
+        String message = newMemberFound ? "새로운 멤버를 찾았습니다" : "새로운 멤버를 찾지 못 했습니다";
+        return ResponseEntity.ok(message);
+    }
 }

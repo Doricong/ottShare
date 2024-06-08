@@ -39,4 +39,10 @@ public class OttShareRoom extends BaseTimeEntity{
     public void removeUser(SharingUser sharingUser) {
         sharingUsers.remove(sharingUser);
     }
+
+    // 새로운 사용자 추가 로직
+    public void addUser(SharingUser sharingUser) {
+        sharingUsers.add(sharingUser);
+        sharingUser.addRoom(this);
+    }
 }
