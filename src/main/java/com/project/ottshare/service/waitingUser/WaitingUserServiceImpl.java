@@ -1,6 +1,5 @@
 package com.project.ottshare.service.waitingUser;
 
-import com.project.ottshare.dto.userDto.UserInfo;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.User;
@@ -13,14 +12,13 @@ import com.project.ottshare.repository.UserRepository;
 import com.project.ottshare.repository.WaitingUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.data.domain.Pageable;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
 
 @Service
 @Transactional(readOnly = true)
@@ -73,8 +71,10 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         }
     }
 
-    public boolean existsByUserId(Long userId) {
-        return waitingUserRepository.existsByUserId(userId);
+    @Override
+    public Optional<Long> getWaitingUserIdByUserId(Long userId) {
+        return waitingUserRepository.findByUserId(userId)
+                .map(WaitingUser::getId);
     }
 
     /**

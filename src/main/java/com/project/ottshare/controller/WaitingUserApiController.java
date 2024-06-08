@@ -5,7 +5,6 @@ import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.SharingUser;
-import com.project.ottshare.exception.UserNotFoundException;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import com.project.ottshare.service.waitingUser.WaitingUserService;
@@ -18,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,11 +77,10 @@ public class WaitingUserApiController {
      * userId로 user 조회
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<Boolean> findWaitingUser(@PathVariable("userId") Long userId) {
-        if (waitingUserService.existsByUserId(userId)) {
-            return ResponseEntity.ok(true);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+    public ResponseEntity<Long> findWaitingUser(@PathVariable("userId") Long userId) {
+        Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userId)
+                .orElse(0L);
+        return ResponseEntity.ok(waitingUserId);
     }
 
 }

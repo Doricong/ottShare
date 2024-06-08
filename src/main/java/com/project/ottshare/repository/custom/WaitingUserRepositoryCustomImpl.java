@@ -43,11 +43,12 @@ public class WaitingUserRepositoryCustomImpl implements WaitingUserRepositoryCus
     }
 
     @Override
-    public boolean existsByUserId(Long userId) {
-        return queryFactory
-                .selectOne()
-                .from(waitingUser)
-                .where(waitingUser.user.userId.eq(userId))
-                .fetchFirst() != null;
+    public Optional<WaitingUser> findByUserId(Long userId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(waitingUser)
+                        .where(waitingUser.user.userId.eq(userId))
+                        .fetchOne()
+        );
     }
 }
