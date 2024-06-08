@@ -118,4 +118,8 @@ public class User extends BaseTimeEntity{
     public void checkShareRoom() {
         this.isShareRoom = true;
     }
+
+    public void leaveShareRoom() {
+        this.isShareRoom = false;
+    }
 }

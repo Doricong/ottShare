@@ -13,5 +13,7 @@ public interface SharingUserService {
 
     void associateRoomWithSharingUsers(List<SharingUser> sharingUsers, OttShareRoomResponse room);
 
+    SharingUserResponse getSharingUserByUserId(Long userId);
+
     SharingUserResponse getSharingUser(Long userId);
 }

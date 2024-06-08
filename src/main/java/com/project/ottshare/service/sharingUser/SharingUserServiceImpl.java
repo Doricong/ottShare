@@ -6,6 +6,7 @@ import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.exception.OttSharingRoomNotFoundException;
+import com.project.ottshare.exception.SharingUserNotFoundException;
 import com.project.ottshare.repository.SharingUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,14 +46,23 @@ public class SharingUserServiceImpl implements SharingUserService{
     }
 
     @Override
-    public SharingUserResponse getSharingUser(Long userId) {
+    public SharingUserResponse getSharingUserByUserId(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
-                .orElseThrow(() -> new OttSharingRoomNotFoundException(userId));
+                .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
         SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
 
         return sharingUserResponse;
     }
 
+    @Override
+    public SharingUserResponse getSharingUser(Long userId) {
+        SharingUser sharingUser = sharingUserRepository.findById(userId)
+                .orElseThrow(() -> new SharingUserNotFoundException(userId));
+
+        SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
+
+        return sharingUserResponse;
+    }
 
 }

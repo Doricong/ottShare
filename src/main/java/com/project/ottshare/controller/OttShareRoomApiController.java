@@ -3,7 +3,7 @@ package com.project.ottshare.controller;
 import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
-import com.project.ottshare.repository.WaitingUserRepository;
+import com.project.ottshare.dto.userDto.UserResponse;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class OttShareRoomApiController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<OttShareRoomResponse> getOttShareRoom(@PathVariable("userId") Long userId) {
-        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId);
+        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userId);
 
         OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(sharingUser.getOttShareRoom().getId());
 
@@ -72,7 +72,7 @@ public class OttShareRoomApiController {
      */
     @GetMapping("/{userId}/idPassword")
     public ResponseEntity<OttShareRoomIdAndPasswordResponse> getIdAndPassword(@PathVariable("userId") Long userId) {
-        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId);
+        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userId);
 
         Long roomId = sharingUser.getOttShareRoom().getId();
 

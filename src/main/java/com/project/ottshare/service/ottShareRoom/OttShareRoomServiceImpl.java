@@ -74,11 +74,13 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     public void expelUser(Long roomId,Long userId) {
         SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException("User not found in the room"));
-        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
+        sharingUser.getUser().leaveShareRoom();
 
+        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
         //user 제거
         ottShareRoom.removeUser(sharingUser);
-        //todo: 대기방에 있는 맴버 추가해야 함
+
+        sharingUserRepository.delete(sharingUser);
     }
 
     @Override
@@ -86,15 +88,18 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     public void leaveRoom(Long roomId, Long userId) {
         SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException("User not found in the room"));
-        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
+        sharingUser.getUser().leaveShareRoom();
 
+        OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
         //user 제거
         ottShareRoom.removeUser(sharingUser);
-        //todo: 대기방에 있는 맴버 추가해야 함
+
+        sharingUserRepository.delete(sharingUser);
+
     }
 
     /**
-     * 체크기능
+     * 체크 기능
      */
     @Override
     @Transactional
