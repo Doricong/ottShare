@@ -78,7 +78,6 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
 
         //user 제거
         ottShareRoom.removeUser(sharingUser);
-        //todo: 대기방에 있는 맴버 추가해야 함
     }
 
     @Override
@@ -90,11 +89,10 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
 
         //user 제거
         ottShareRoom.removeUser(sharingUser);
-        //todo: 대기방에 있는 맴버 추가해야 함
     }
 
     /**
-     * 체크기능
+     * 체크 기능
      */
     @Override
     @Transactional

@@ -3,7 +3,6 @@ package com.project.ottshare.controller;
 import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
-import com.project.ottshare.repository.WaitingUserRepository;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import lombok.RequiredArgsConstructor;

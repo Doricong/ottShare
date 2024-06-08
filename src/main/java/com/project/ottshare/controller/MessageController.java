@@ -2,20 +2,14 @@ package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
 import com.project.ottshare.dto.ottShareRoomDto.MessageResponse;
-import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
-import com.project.ottshare.dto.sharingUserDto.OttRoomMemberResponse;
 import com.project.ottshare.service.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
 
