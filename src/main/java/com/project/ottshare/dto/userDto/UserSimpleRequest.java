@@ -1,5 +1,6 @@
 package com.project.ottshare.dto.userDto;
 
+import com.project.ottshare.enums.BankType;
 import com.project.ottshare.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -26,4 +27,12 @@ public class UserSimpleRequest {
     @NotBlank(message = "닉네임은 필수 입력 값입니다.", groups = ValidationGroups.NotBlankGroups.class)
     @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,10}$", message = "2~10자의 한글, 영문, 숫자만 입력해주세요.", groups = ValidationGroups.PatternGroups.class)
     private String nickname;
+
+    @NotBlank(message = "계좌번호는 필수 입력 값입니다.", groups = ValidationGroups.NotBlankGroups.class)
+    private String account;
+
+    @NotBlank(message = "예금주는 필수 입력 값입니다.", groups = ValidationGroups.NotBlankGroups.class)
+    private String accountHolder;
+
+    private BankType bank;
 }

@@ -49,12 +49,12 @@ public class OttShareRoomApiController {
     @DeleteMapping("/{roomId}/user/{userId}/leave")
     public ResponseEntity<Void> leaveRoom(@PathVariable("roomId") Long roomId,
                                           @PathVariable("userId") Long userId) {
-        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId);
+        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId); // user의 userid
         //나가는 사람이 리더면 공유방 제거
         if (sharingUser.isLeader()) {
             ottShareRoomService.removeOttShareRoom(roomId);
         }
-        ottShareRoomService.leaveRoom(roomId, userId);
+        ottShareRoomService.leaveRoom(roomId, userId);  // sharingUser의 id
         return ResponseEntity.ok().build();
     }
 

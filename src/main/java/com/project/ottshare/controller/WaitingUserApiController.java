@@ -5,6 +5,8 @@ import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.SharingUser;
+import com.project.ottshare.exception.OttLeaderNotFoundException;
+import com.project.ottshare.exception.OttNonLeaderNotFoundException;
 import com.project.ottshare.exception.UserNotFoundException;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
@@ -12,6 +14,7 @@ import com.project.ottshare.service.waitingUser.WaitingUserService;
 import com.project.ottshare.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,27 +40,34 @@ public class WaitingUserApiController {
         log.info("Saving user data: {}", dto.getOtt());
         waitingUserService.save(dto);
 
-        // 해당 OTT 서비스의 리더와 비리더 멤버를 확인하고 모든 조건이 충족되면 방을 생성
-        List<WaitingUserResponse> member = waitingUserService.getNonLeaderByOtt(dto.getOtt());
-        WaitingUserResponse leader = waitingUserService.getLeaderByOtt(dto.getOtt());
-        member.add(leader); // 리더 정보를 리스트에 추가
+        try {
+            List<WaitingUserResponse> member = waitingUserService.getNonLeaderByOtt(dto.getOtt());
+            WaitingUserResponse leader = waitingUserService.getLeaderByOtt(dto.getOtt());
 
-        // 인원 수가 충분하면 자동 매칭 대기방에서 사용자 삭제 및 방을 생성
-        waitingUserService.deleteUsers(member);
+            member.add(leader); // 리더 정보를 리스트에 추가
 
-        List<SharingUser> sharingUsers = sharingUserService.prepareSharingUsers(member);
-        String ottId = leader.getOttId();
-        String ottPassword = leader.getOttPassword();
+            // 인원 수가 충분하면 자동 매칭 대기방에서 사용자 삭제 및 방을 생성
+            waitingUserService.deleteUsers(member);
 
-        OttSharingRoomRequest ottSharingRoomRequest = new OttSharingRoomRequest(sharingUsers, dto.getOtt(), ottId, ottPassword);
+            List<SharingUser> sharingUsers = sharingUserService.prepareSharingUsers(member);
+            String ottId = leader.getOttId();
+            String ottPassword = leader.getOttPassword();
 
-        Long savedOttShareRoomId = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
-        OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(savedOttShareRoomId);
+            OttSharingRoomRequest ottSharingRoomRequest = new OttSharingRoomRequest(sharingUsers, dto.getOtt(), ottId, ottPassword);
 
-        sharingUserService.associateRoomWithSharingUsers(sharingUsers, ottShareRoom);
+            Long savedOttShareRoomId = ottShareRoomService.save(ottSharingRoomRequest);// 방 생성 로직
+            OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(savedOttShareRoomId);
 
-        log.info("Room created successfully for OTT service: {}", dto.getOtt());
-        return ResponseEntity.ok("Room created successfully.");
+            sharingUserService.associateRoomWithSharingUsers(sharingUsers, ottShareRoom);
+
+            log.info("Room created successfully for OTT service: {}", dto.getOtt());
+
+            return ResponseEntity.ok("Room created successfully.");
+        } catch (OttNonLeaderNotFoundException e) {
+            return ResponseEntity.ok("팀원 아직 다 안 모임");
+        } catch (OttLeaderNotFoundException e) {
+            return ResponseEntity.ok("방장 아직 없음");
+        }
     }
 
 
@@ -76,14 +86,16 @@ public class WaitingUserApiController {
      * userId로 user 조회
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<Boolean> findWaitingUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Long> findWaitingUser(@PathVariable("userId") Long userId) {
         // waitingUser의 user 조회
         try {
-            waitingUserService.getWaitingUserByUserId(userId);
-            return ResponseEntity.ok(true);
+            WaitingUserResponse userResponse = waitingUserService.getWaitingUserByUserId(userId);
+            return ResponseEntity.ok(userResponse.getId());
         } catch (UserNotFoundException e) {
-            return ResponseEntity.ok(false);
+            return ResponseEntity.ok(0L);
         }
     }
+
+
 
 }
