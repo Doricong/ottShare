@@ -87,15 +87,9 @@ public class WaitingUserApiController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<Long> findWaitingUser(@PathVariable("userId") Long userId) {
-        // waitingUser의 user 조회
-        try {
-            WaitingUserResponse userResponse = waitingUserService.getWaitingUserByUserId(userId);
-            return ResponseEntity.ok(userResponse.getId());
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.ok(0L);
-        }
+        Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userId)
+                .orElse(0L);
+        return ResponseEntity.ok(waitingUserId);
     }
-
-
 
 }
