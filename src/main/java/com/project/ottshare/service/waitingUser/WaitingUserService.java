@@ -6,6 +6,7 @@ import com.project.ottshare.enums.OttType;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WaitingUserService {
 
@@ -15,7 +16,7 @@ public interface WaitingUserService {
 
     void deleteUsers(List<WaitingUserResponse> waitingUserResponses);
 
-    WaitingUserResponse getWaitingUserByUserId(Long userId);
+    Optional<Long> getWaitingUserIdByUserId(Long userid);
 
     WaitingUserResponse getLeaderByOtt(OttType ott);
 

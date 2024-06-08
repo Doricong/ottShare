@@ -1,6 +1,5 @@
 package com.project.ottshare.repository.custom;
 
-import com.project.ottshare.entity.QWaitingUser;
 import com.project.ottshare.entity.WaitingUser;
 import com.project.ottshare.enums.OttType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -41,5 +40,15 @@ public class WaitingUserRepositoryCustomImpl implements WaitingUserRepositoryCus
                 .fetch();
 
         return result;
+    }
+
+    @Override
+    public Optional<WaitingUser> findByUserId(Long userId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(waitingUser)
+                        .where(waitingUser.user.userId.eq(userId))
+                        .fetchOne()
+        );
     }
 }
