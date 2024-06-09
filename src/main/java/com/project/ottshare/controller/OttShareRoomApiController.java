@@ -53,8 +53,9 @@ public class OttShareRoomApiController {
         //나가는 사람이 리더면 공유방 제거
         if (sharingUser.isLeader()) {
             ottShareRoomService.removeOttShareRoom(roomId);
+        } else {
+            ottShareRoomService.leaveRoom(roomId, userId);
         }
-        ottShareRoomService.leaveRoom(roomId, userId);
         return ResponseEntity.ok().build();
     }
 
