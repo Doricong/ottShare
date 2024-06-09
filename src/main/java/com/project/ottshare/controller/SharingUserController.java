@@ -22,7 +22,7 @@ public class SharingUserController {
     /**
      * 리더, ott 반환
      */
-    @GetMapping("{userId}/roleAndOtt")
+    @GetMapping("/{userId}/roleAndOtt")
     public ResponseEntity<IsLeaderAndOttResponse> getSharingUserRoleAndOttByUserId(@PathVariable("userId") Long userId) {
         IsLeaderAndOttResponse isLeaderAndOttResponse = sharingUserService.getSharingUserIsLeaderAndOttByUserId(userId)
                 .orElse(null);
