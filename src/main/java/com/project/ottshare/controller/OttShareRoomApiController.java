@@ -21,7 +21,6 @@ public class OttShareRoomApiController {
     private final OttShareRoomService ottShareRoomService;
     private final SharingUserService sharingUserService;
 
-
     /**
      * 채팅방
      */
@@ -50,16 +49,12 @@ public class OttShareRoomApiController {
     @DeleteMapping("/{roomId}/user/{userId}/leave")
     public ResponseEntity<Void> leaveRoom(@PathVariable("roomId") Long roomId,
                                           @PathVariable("userId") Long userId) {
-        log.info("1111");
         SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId);
         //나가는 사람이 리더면 공유방 제거
         if (sharingUser.isLeader()) {
             ottShareRoomService.removeOttShareRoom(roomId);
-            log.info("2222");
-        } else {
-            ottShareRoomService.leaveRoom(roomId, userId);
         }
-        log.info("3333");
+        ottShareRoomService.leaveRoom(roomId, userId);
         return ResponseEntity.ok().build();
     }
 

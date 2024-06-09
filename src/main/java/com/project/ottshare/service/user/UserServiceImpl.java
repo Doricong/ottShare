@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService{
                 .orElseThrow(() -> new UserNotFoundException(userSimpleRequest.getId()));
 
         //user 정보 수정
-        user.update(userSimpleRequest.getUsername(), encoder.encode(userSimpleRequest.getPassword()), userSimpleRequest.getNickname());
+        user.update(userSimpleRequest.getUsername(), encoder.encode(userSimpleRequest.getPassword()), userSimpleRequest.getNickname(), userSimpleRequest.getAccount(), userSimpleRequest.getAccountHolder(), userSimpleRequest.getBank());
     }
 
     @Override

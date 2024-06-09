@@ -5,9 +5,11 @@ import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQResponse;
 import com.project.ottshare.enums.OttType;
 import com.project.ottshare.service.ottRecommendation.OttRecQServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ottRecQuestions")
@@ -24,17 +26,31 @@ public class OttRecQuestionsApiController {
         netflix = 0;
         tiving = 0;
         wavve = 0;
+        resultOtt = OttType.NETFLIX;
 
         OttRecQResponse ottRecQuestions = ottRecQService.getOttRecQuestions(1L);
 
         return ResponseEntity.ok(ottRecQuestions);
     }
 
-    @PostMapping("/16")
+    @GetMapping("/10")
     public ResponseEntity<OttType> getResult() {
 
-        if (tiving > netflix) resultOtt = OttType.TVING;
-        if (wavve > netflix) resultOtt = OttType.WAVVE;
+        System.out.println("netflix = " + netflix + "점");
+        System.out.println("tiving = " + tiving + "점");
+        System.out.println("wavve = " + wavve + "점");
+
+        if (tiving > netflix) {
+            resultOtt = OttType.TVING;
+            if (wavve > tiving) {
+                resultOtt = OttType.WAVVE;
+            }
+        } else {
+            if (wavve > netflix) {
+                resultOtt = OttType.WAVVE;
+            }
+        }
+
 
         return ResponseEntity.ok(resultOtt);
     }

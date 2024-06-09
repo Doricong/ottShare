@@ -105,10 +105,13 @@ public class User extends BaseTimeEntity{
      * 비즈니스 로직
      */
     //user 정보(password, nickname) 수정
-    public void update(String username, String password, String nickname) {
+    public void update(String username, String password, String nickname, String account, String accountHolder, BankType bank) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
+        this.account = account;
+        this.accountHolder = accountHolder;
+        this.bank = bank;
     }
 
     public void updatePassword(String password) {
