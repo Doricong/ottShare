@@ -1,5 +1,6 @@
 package com.project.ottshare.service.waitingUser;
 
+import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.enums.OttType;
@@ -21,4 +22,6 @@ public interface WaitingUserService {
     WaitingUserResponse getLeaderByOtt(OttType ott);
 
     List<WaitingUserResponse> getNonLeaderByOtt(OttType ott);
+
+    Optional<IsLeaderAndOttResponse> getWaitingUserIsLeaderAndOttByUserId(Long userId);
 }

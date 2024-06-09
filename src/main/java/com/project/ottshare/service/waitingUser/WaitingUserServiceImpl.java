@@ -1,7 +1,9 @@
 package com.project.ottshare.service.waitingUser;
 
+import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
+import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.entity.WaitingUser;
 import com.project.ottshare.enums.OttType;
@@ -112,6 +114,12 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         }
 
         return waitingUserResponses;
+    }
+
+    @Override
+    public Optional<IsLeaderAndOttResponse> getWaitingUserIsLeaderAndOttByUserId(Long userId) {
+        Optional<WaitingUser> waitingUser = waitingUserRepository.findByUserUserId(userId);
+        return waitingUser.map(user -> new IsLeaderAndOttResponse(user.isLeader(), user.getOtt()));
     }
 
     private int getNonLeaderCountByOtt(OttType ott) {

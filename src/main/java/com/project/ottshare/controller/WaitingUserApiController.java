@@ -2,12 +2,12 @@ package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
+import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.exception.OttLeaderNotFoundException;
 import com.project.ottshare.exception.OttNonLeaderNotFoundException;
-import com.project.ottshare.exception.UserNotFoundException;
 import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
 import com.project.ottshare.service.sharingUser.SharingUserService;
 import com.project.ottshare.service.waitingUser.WaitingUserService;
@@ -89,6 +89,17 @@ public class WaitingUserApiController {
         Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userId)
                 .orElse(0L);
         return ResponseEntity.ok(waitingUserId);
+    }
+
+    /**
+     * 리더, ott 반환
+     */
+    @GetMapping("/{userId}/roleAndOtt")
+    public ResponseEntity<IsLeaderAndOttResponse> getWaitingUserRoleAndOttByUserId(@PathVariable("userId") Long userId) {
+        IsLeaderAndOttResponse isLeaderAndOttResponse = waitingUserService.getWaitingUserIsLeaderAndOttByUserId(userId)
+                .orElse(null);
+
+        return ResponseEntity.ok(isLeaderAndOttResponse);
     }
 
 }

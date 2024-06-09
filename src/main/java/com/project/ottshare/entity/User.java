@@ -73,7 +73,6 @@ public class User extends BaseTimeEntity{
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-    ;
 
     @Column(name = "is_share_room", nullable = false, columnDefinition = "boolean default false")
     private boolean isShareRoom;

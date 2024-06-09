@@ -1,11 +1,11 @@
 package com.project.ottshare.service.sharingUser;
 
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
+import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
 import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
-import com.project.ottshare.exception.OttSharingRoomNotFoundException;
 import com.project.ottshare.exception.SharingUserNotFoundException;
 import com.project.ottshare.repository.SharingUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -63,6 +64,11 @@ public class SharingUserServiceImpl implements SharingUserService{
         SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
 
         return sharingUserResponse;
+    }
+
+    public Optional<IsLeaderAndOttResponse> getSharingUserIsLeaderAndOttByUserId(Long userId) {
+        Optional<SharingUser> sharingUser = sharingUserRepository.findByUserUserId(userId);
+        return sharingUser.map(user -> new IsLeaderAndOttResponse(user.isLeader(), user.getOttShareRoom().getOtt()));
     }
 
 }
