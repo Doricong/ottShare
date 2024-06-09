@@ -26,4 +26,11 @@ public class SharingUserRepositoryCustomImpl implements SharingUserRepositoryCus
         return Optional.ofNullable(result);
 
     }
+
+    @Override
+    public void deleteByOttShareRoomId(Long roomId) {
+        jpaQueryFactory.delete(sharingUser)
+                .where(sharingUser.ottShareRoom.id.eq(roomId))
+                .execute();
+    }
 }

@@ -16,14 +16,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ott_share_room")
-public class OttShareRoom extends BaseTimeEntity{
+public class OttShareRoom extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ott_share_room_id")
     private Long id;
 
     @OneToMany(mappedBy = "ottShareRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharingUser> sharingUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ottShareRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ott", nullable = false)
@@ -35,14 +39,15 @@ public class OttShareRoom extends BaseTimeEntity{
     @Column(name = "ott_password")
     private String ottPassword;
 
-    //비즈니스 로직
+    // 비즈니스 로직
     public void removeUser(SharingUser sharingUser) {
+        sharingUser.setOttShareRoom(null);
         sharingUsers.remove(sharingUser);
     }
 
     // 새로운 사용자 추가 로직
     public void addUser(SharingUser sharingUser) {
         sharingUsers.add(sharingUser);
-        sharingUser.addRoom(this);
+        sharingUser.setOttShareRoom(this);
     }
 }

@@ -214,4 +214,27 @@ public class UserApiController {
         }
     }
 
+    @PostMapping("/kakao-login")
+    public ResponseEntity<?> kakaoLogin(@RequestBody UserInfo userInfo, HttpServletRequest request) {
+        String email = userInfo.getEmail();
+        Optional<User> existingUser = userService.findUserByEmail(email);
+
+        if (existingUser.isPresent()) {
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
+            Authentication authentication = new OAuth2AuthenticationToken(userDetails, userDetails.getAuthorities(), "kakao");
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+            return ResponseEntity.ok(new UserInfo(userDetails.getUser()));
+        } else {
+            userService.save(userInfo.toUserRequest());
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
+
+            Authentication authentication = new OAuth2AuthenticationToken(userDetails, userDetails.getAuthorities(), "kakao");
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+
+            return ResponseEntity.ok(new UserInfo(userDetails.getUser()));
+        }
+    }
+
 }

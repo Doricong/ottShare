@@ -10,6 +10,7 @@ import com.project.ottshare.enums.OttType;
 import com.project.ottshare.exception.OttSharingRoomNotFoundException;
 import com.project.ottshare.exception.SharingUserNotCheckedException;
 import com.project.ottshare.exception.SharingUserNotFoundException;
+import com.project.ottshare.repository.MessageRepository;
 import com.project.ottshare.repository.OttShareRoomRepository;
 import com.project.ottshare.repository.SharingUserRepository;
 import com.project.ottshare.repository.WaitingUserRepository;
@@ -29,6 +30,7 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     private final OttShareRoomRepository ottShareRoomRepository;
     private final SharingUserRepository sharingUserRepository;
     private final WaitingUserRepository waitingUserRepository;
+    private final MessageRepository messageRepository;
     private final SharingUserFactory sharingUserFactory;
 
     /**
@@ -62,7 +64,14 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     public void removeOttShareRoom(Long id) {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
+        // OttShareRoom에 연결된 모든 메시지 삭제
+        messageRepository.deleteByOttShareRoomId(id);
+        // OttShareRoom에 연결된 모든 사용자를 삭제
+        sharingUserRepository.deleteByOttShareRoomId(id);
 
+        for (SharingUser sharingUser : ottShareRoom.getSharingUsers()) {
+            sharingUser.getUser().leaveShareRoom();
+        }
         ottShareRoomRepository.delete(ottShareRoom);
     }
 

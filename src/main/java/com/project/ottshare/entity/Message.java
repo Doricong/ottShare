@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "message")
-public class Message extends BaseTimeEntity{
+public class Message extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_id")
     private Long id;
 
@@ -28,4 +29,12 @@ public class Message extends BaseTimeEntity{
 
     @Column(name = "message", nullable = false)
     private String message;
+
+    public void setOttShareRoom(OttShareRoom room) {
+        this.ottShareRoom = room;
+    }
+
+    public void setSharingUser(SharingUser user) {
+        this.sharingUser = user;
+    }
 }
