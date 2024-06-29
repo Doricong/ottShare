@@ -28,28 +28,34 @@ public class SharingUserServiceImpl implements SharingUserService{
     @Override
     @Transactional
     public List<SharingUser> prepareSharingUsers(List<WaitingUserResponse> responses) {
-        List<SharingUser> sharingUser = new ArrayList<>();
+        List<SharingUser> sharingUsers = new ArrayList<>();
         for (WaitingUserResponse member : responses) {
             SharingUser entity = member.toEntity();
-            sharingUser.add(entity);
+            sharingUsers.add(entity);
             entity.getUser().checkShareRoom();
         }
-        return sharingUser;
+        log.info("Prepared {} sharing users", sharingUsers.size());
+        return sharingUsers;
     }
 
     @Override
     @Transactional
     public void associateRoomWithSharingUsers(List<SharingUser> sharingUsers, OttShareRoomResponse room) {
+        OttShareRoom entity = room.toEntity();
+
         for (SharingUser sharingUser : sharingUsers) {
-            OttShareRoom entity = room.toEntity();
             sharingUser.addRoom(entity);
         }
+        log.info("Associated room ID {} with {} sharing users", room.getId(), sharingUsers.size());
     }
 
     @Override
     public SharingUserResponse getSharingUserByUserId(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
-                .orElseThrow(() -> new SharingUserNotFoundException(userId));
+                .orElseThrow(() -> {
+                    log.error("SharingUser not found with userId: {}", userId);
+                    return new SharingUserNotFoundException(userId);
+                });
 
         SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
 

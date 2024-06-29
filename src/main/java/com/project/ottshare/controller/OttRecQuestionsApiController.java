@@ -1,7 +1,7 @@
 package com.project.ottshare.controller;
 
-import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQRequest;
-import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQResponse;
+import com.project.ottshare.dto.ottRecQuestionsDto.OttRecQRequest;
+import com.project.ottshare.dto.ottRecQuestionsDto.OttRecQResponse;
 import com.project.ottshare.enums.OttType;
 import com.project.ottshare.service.ottRecommendation.OttRecQServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -17,80 +17,61 @@ public class OttRecQuestionsApiController {
 
     private final OttRecQServiceImpl ottRecQService;
 
-    int netflix, tiving, wavve = 0;
-    OttType resultOtt = OttType.NETFLIX;
-
-    @GetMapping("/1")
-    public ResponseEntity<OttRecQResponse> getFirstOttRecommendQuestions() {
-        // 점수 모두 0으로 초기화
-        netflix = 0;
-        tiving = 0;
-        wavve = 0;
-        resultOtt = OttType.NETFLIX;
-
+    @GetMapping("/first")
+    public ResponseEntity<OttRecQResponse> getFirstRecommendationQuestion() {
         OttRecQResponse ottRecQuestions = ottRecQService.getOttRecQuestions(1L);
-
         return ResponseEntity.ok(ottRecQuestions);
     }
 
-    @GetMapping("/10")
-    public ResponseEntity<OttType> getResult() {
+    @GetMapping("/result")
+    public ResponseEntity<OttType> getRecommendationResult(@RequestParam int netflix, @RequestParam int tiving, @RequestParam int wavve) {
+        log.info("netflix = {}점", netflix);
+        log.info("tiving = {}점", tiving);
+        log.info("wavve = {}점", wavve);
 
-        System.out.println("netflix = " + netflix + "점");
-        System.out.println("tiving = " + tiving + "점");
-        System.out.println("wavve = " + wavve + "점");
-
-        if (tiving > netflix) {
-            resultOtt = OttType.TVING;
-            if (wavve > tiving) {
-                resultOtt = OttType.WAVVE;
-            }
-        } else {
-            if (wavve > netflix) {
-                resultOtt = OttType.WAVVE;
-            }
-        }
-
-
+        OttType resultOtt = calculateResultOtt(netflix, tiving, wavve);
         return ResponseEntity.ok(resultOtt);
     }
 
-    @PostMapping("/{id}")
-    public void countScore(@PathVariable Long id,
-                           @RequestBody OttRecQRequest ottRecQRequest) {
-        Boolean isFirstQuestion = ottRecQRequest.getIsFirstQuestion();
-
-        if (isFirstQuestion) {
-            OttType firstQuestionOttType = ottRecQRequest.getFirstQuestionOttType();
-
-            switch (firstQuestionOttType) {
-                case NETFLIX -> netflix++;
-                case TVING -> tiving++;
-                case WAVVE -> wavve++;
-            }
+    @PostMapping("/{id}/score")
+    public void submitQuestionResponse(@PathVariable Long id,
+                                       @RequestBody OttRecQRequest ottRecQRequest,
+                                       @RequestParam int netflix,
+                                       @RequestParam int tiving,
+                                       @RequestParam int wavve) {
+        if (ottRecQRequest.getIsFirstQuestion()) {
+            netflix += countScoreByOttType(ottRecQRequest.getFirstQuestionOttType());
         } else {
-            OttType secondQuestionOttType = ottRecQRequest.getSecondQuestionOttType();
-
-            switch (secondQuestionOttType) {
-                case NETFLIX -> netflix++;
-                case TVING -> tiving++;
-                case WAVVE -> wavve++;
-            }
+            tiving += countScoreByOttType(ottRecQRequest.getSecondQuestionOttType());
         }
 
-        System.out.println("netflix = " + netflix + "점");
-        System.out.println("tiving = " + tiving + "점");
-        System.out.println("wavve = " + wavve + "점");
-
+        log.info("netflix = {}점", netflix);
+        log.info("tiving = {}점", tiving);
+        log.info("wavve = {}점", wavve);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<OttRecQResponse> getOttRecommendQuestions(@PathVariable Long id) {
         OttRecQResponse ottRecQuestions = ottRecQService.getOttRecQuestions(id);
-
         return ResponseEntity.ok(ottRecQuestions);
     }
 
+    private OttType calculateResultOtt(int netflix, int tiving, int wavve) {
+        if (tiving > netflix) {
+            return wavve > tiving ? OttType.WAVVE : OttType.TVING;
+        } else {
+            return wavve > netflix ? OttType.WAVVE : OttType.NETFLIX;
+        }
+    }
 
-
+    private int countScoreByOttType(OttType ottType) {
+        switch (ottType) {
+            case NETFLIX:
+            case TVING:
+            case WAVVE:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 }

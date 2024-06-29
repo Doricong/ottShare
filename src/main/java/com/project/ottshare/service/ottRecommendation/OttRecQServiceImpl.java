@@ -1,6 +1,6 @@
 package com.project.ottshare.service.ottRecommendation;
 
-import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQResponse;
+import com.project.ottshare.dto.ottRecQuestionsDto.OttRecQResponse;
 import com.project.ottshare.entity.OttRecQuestions;
 import com.project.ottshare.exception.OttRecQNotFoundException;
 import com.project.ottshare.repository.OttRecQRepository;

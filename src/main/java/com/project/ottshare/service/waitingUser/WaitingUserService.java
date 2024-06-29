@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface WaitingUserService {
 
-    void save(WaitingUserRequest waitingUserRequest);
+    void createWaitingUser(WaitingUserRequest waitingUserRequest);
 
     void deleteUser(Long id);
 

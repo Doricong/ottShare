@@ -36,13 +36,11 @@ public class WaitingUserServiceImpl implements WaitingUserService{
      */
     @Override
     @Transactional
-    public void save(WaitingUserRequest waitingUserRequest) {
+    public void createWaitingUser(WaitingUserRequest waitingUserRequest) {
         User user = userRepository.findByUsername(waitingUserRequest.getUserInfo().getUsername())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을수 없습니다."));
 
-        //waitingUserRequest -> waitingUser
         WaitingUser waitingUser = waitingUserRequest.toEntity(user);
-        //waitingUser 저장
         waitingUserRepository.save(waitingUser);
     }
 
@@ -67,7 +65,6 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         for (WaitingUserResponse waitingUserResponse : waitingUserResponses) {
             WaitingUser waitingUser = waitingUserRepository.findById(waitingUserResponse.getId())
                     .orElseThrow(() -> new UserNotFoundException(waitingUserResponse.getId()));
-
             //waitingUser 삭제
             waitingUserRepository.delete(waitingUser);
         }

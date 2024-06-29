@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class NaverUserInfo implements OAuth2UserInfo{
+public class NaverUserInfo implements OAuth2UserInfo {
 
     private final Map<String, Object> attributes;
 

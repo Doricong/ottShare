@@ -1,6 +1,6 @@
 package com.project.ottshare.service.ottRecommendation;
 
-import com.project.ottshare.dto.OttRecQuestionsDto.OttRecQResponse;
+import com.project.ottshare.dto.ottRecQuestionsDto.OttRecQResponse;
 
 public interface OttRecQService {
 

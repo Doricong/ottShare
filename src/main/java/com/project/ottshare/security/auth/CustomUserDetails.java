@@ -17,18 +17,20 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     private User user;
     private Map<String , Object> attributes;
 
-    //일반 로그인
+    // 일반 로그인
     public CustomUserDetails(User user) {
         this.user = user;
     }
 
-    //Oauth2 로그인
+    // Oauth2 로그인
     public CustomUserDetails(User user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
     }
 
-    public Long getId() { return user.getUserId();}
+    public Long getId() {
+        return user.getUserId();
+    }
 
     public String getEmail() {
         return user.getEmail();
@@ -65,8 +67,6 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     public boolean isShareRoom() {
         return user.isShareRoom();
     }
-
-
 
     @Override
     public String getName() {

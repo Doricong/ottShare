@@ -32,24 +32,19 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     @Transactional
-    public Long save(UserRequest userRequest) {
+    public void createUser(UserRequest userRequest) {
         //password 인코딩
         userRequest.setPassword(encoder.encode(userRequest.getPassword()));
-
         //userRequest -> user
         User user = userRequest.toEntity();
-
         //user 저장
         userRepository.save(user);
-
-        return user.getUserId();
     }
 
     @Override
     public UserResponse getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-
         //user -> userResponse
         UserResponse userResponse = new UserResponse(user);
 
@@ -68,9 +63,12 @@ public class UserServiceImpl implements UserService{
      * 비밀번호 찾기
      */
     @Override
-    public void UserVerificationService(String name, String username, String email) {
-        userRepository.findByNameAndUsernameAndEmail(name, username, email)
+    public UserResponse findUserForPasswordReset(String name, String username, String email) {
+        User user = userRepository.findByNameAndUsernameAndEmail(name, username, email)
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+        return new UserResponse(user);
+
     }
 
     @Override
@@ -85,11 +83,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public void updatePassword(String name, String email, String password) {
-        User user = userRepository.findByNameAndEmail(name, email)
-                .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
+    public void updatePassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        user.updatePassword(encoder.encode(password));
+        user.updatePassword(encoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Override

@@ -24,11 +24,9 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     @Transactional
-    public Long save(MessageRequest messageRequest) {
+    public void createMessage(MessageRequest messageRequest) {
         Message entity = messageRequest.toEntity();
         messageRepository.save(entity);
-
-        return entity.getId();
     }
 
     @Override

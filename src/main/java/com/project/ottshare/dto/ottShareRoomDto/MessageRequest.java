@@ -6,6 +6,7 @@ import com.project.ottshare.dto.sharingUserDto.OttRoomMemberResponse;
 import com.project.ottshare.entity.Message;
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +20,13 @@ import java.util.List;
 @Setter
 public class MessageRequest {
 
+    @NotNull(message = "OttShareRoom cannot be null")
     private OttShareRoomResponse ottShareRoom;
 
+    @NotNull(message = "OttRoomMemberResponse cannot be null")
     private OttRoomMemberResponse ottRoomMemberResponse;
 
+    @NotNull(message = "Message cannot be null")
     private String message;
 
     public Message toEntity() {
@@ -35,13 +39,4 @@ public class MessageRequest {
                 .message(message)
                 .build();
     }
-
-//    @JsonCreator
-//    public MessageRequest(@JsonProperty("ottShareRoom") OttShareRoomResponse ottShareRoom,
-//                                     @JsonProperty("ottRoomMemberResponse") OttRoomMemberResponse ottRoomMemberResponse,
-//                                     @JsonProperty("message") String message) {
-//        this.ottShareRoom = ottShareRoom;
-//        this.ottRoomMemberResponse = ottRoomMemberResponse;
-//        this.message = message;
-//    }
 }

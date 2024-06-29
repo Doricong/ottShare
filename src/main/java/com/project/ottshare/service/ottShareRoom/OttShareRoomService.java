@@ -6,19 +6,19 @@ import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 
 public interface OttShareRoomService {
 
-    Long save(OttSharingRoomRequest ottSharingRoomRequest);
+    Long createOttShareRoom(OttSharingRoomRequest ottSharingRoomRequest);
 
     OttShareRoomResponse getOttShareRoom(Long id);
 
-    void removeOttShareRoom(Long id);
+    void deleteOttShareRoom(Long id);
 
-    void expelUser(Long roomId, Long userId);
+    void expelUserFromRoom(Long roomId, Long userId);
 
     void leaveRoom(Long roomId, Long userId);
 
-    void checkUser(Long roomId, Long userId);
+    void checkUserInRoom(Long roomId, Long userId);
 
-    OttShareRoomIdAndPasswordResponse idAndPassword(Long roomId, Long userId);
+    OttShareRoomIdAndPasswordResponse getRoomIdAndPassword(Long roomId, Long userId);
 
     boolean findNewMember(Long roomId);
 }

@@ -11,5 +11,4 @@ import java.util.Optional;
 
 public interface OttShareRoomRepository extends JpaRepository<OttShareRoom, Long> {
 
-
 }

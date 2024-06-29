@@ -38,10 +38,10 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
      */
     @Override
     @Transactional
-    public Long save(OttSharingRoomRequest ottSharingRoomRequests) {
+    public Long createOttShareRoom(OttSharingRoomRequest ottSharingRoomRequests) {
         OttShareRoom entity = ottSharingRoomRequests.toEntity();
-
         OttShareRoom savedOttShareRoom = ottShareRoomRepository.save(entity);
+        log.info("Saved OttShareRoom with ID: {}", savedOttShareRoom.getId());
 
         return savedOttShareRoom.getId();
     }
@@ -50,7 +50,6 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     public OttShareRoomResponse getOttShareRoom(Long id) {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
-
         OttShareRoomResponse ottShareRoomResponse = new OttShareRoomResponse(ottShareRoom);
 
         return ottShareRoomResponse;
@@ -61,18 +60,18 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
      */
     @Override
     @Transactional
-    public void removeOttShareRoom(Long id) {
+    public void deleteOttShareRoom(Long id) {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
         // OttShareRoom에 연결된 모든 메시지 삭제
         messageRepository.deleteByOttShareRoomId(id);
         // OttShareRoom에 연결된 모든 사용자를 삭제
         sharingUserRepository.deleteByOttShareRoomId(id);
-
         for (SharingUser sharingUser : ottShareRoom.getSharingUsers()) {
             sharingUser.getUser().leaveShareRoom();
         }
         ottShareRoomRepository.delete(ottShareRoom);
+        log.info("Removed OttShareRoom with ID: {}", id);
     }
 
     /**
@@ -80,16 +79,15 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
      */
     @Override
     @Transactional
-    public void expelUser(Long roomId,Long userId) {
+    public void expelUserFromRoom(Long roomId, Long userId) {
         SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException("User not found in the room"));
         sharingUser.getUser().leaveShareRoom();
-
         OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
         //user 제거
         ottShareRoom.removeUser(sharingUser);
-
         sharingUserRepository.delete(sharingUser);
+        log.info("Expelled user with ID: {} from room ID: {}", userId, roomId);
     }
 
     @Override
@@ -104,7 +102,7 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
         ottShareRoom.removeUser(sharingUser);
 
         sharingUserRepository.delete(sharingUser);
-
+        log.info("User with ID: {} left room ID: {}", userId, roomId);
     }
 
     /**
@@ -112,24 +110,25 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
      */
     @Override
     @Transactional
-    public void checkUser(Long roomId, Long userId) {
+    public void checkUserInRoom(Long roomId, Long userId) {
         SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
         sharingUser.checked();
+        log.info("Checked user with ID: {} in room ID: {}", userId, roomId);
     }
 
     /**
      * 아이디, 비밀번호 확인
      */
     @Override
-    public OttShareRoomIdAndPasswordResponse idAndPassword(Long roomId, Long userId) {
+    public OttShareRoomIdAndPasswordResponse getRoomIdAndPassword(Long roomId, Long userId) {
         SharingUser sharingUser = sharingUserRepository.findUserByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
         OttShareRoom ottShareRoom = sharingUser.getOttShareRoom();
 
-        if (sharingUser.isChecked()) {
+        if (!sharingUser.isChecked()) {
             throw new SharingUserNotCheckedException(userId);
         }
 
@@ -152,16 +151,16 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
 
         if (!newMembers.isEmpty()) {
             WaitingUser waitingUser = newMembers.get(0);
-
             // 팩토리 서비스를 사용하여 SharingUser 생성
             SharingUser sharingUser = sharingUserFactory.createFromWaitingUser(waitingUser, ottShareRoom);
-
             // OttShareRoom에 SharingUser 추가
             ottShareRoom.addUser(sharingUser);
             waitingUserRepository.delete(waitingUser);  // 대기 목록에서 제거
             ottShareRoomRepository.save(ottShareRoom); // 방 업데이트
+            log.info("Added new member to room ID: {}", roomId);
             return true;  // 멤버를 찾은 경우 true 반환
         }
+        log.warn("No new members found for room ID: {}", roomId);
         return false;  // 멤버를 찾지 못한 경우 false 반환
     }
 

@@ -7,17 +7,17 @@ import java.util.Optional;
 
 public interface UserService {
 
-    Long save(UserRequest userRequest);
+    void createUser(UserRequest userRequest);
 
     UserResponse getUser(Long id);
 
     String getUsername(String name, String phoneNumber);
 
-    void UserVerificationService(String name, String username, String email);
+    UserResponse findUserForPasswordReset(String name, String username, String email);
 
     void updateUser(UserSimpleRequest userSimpleRequest);
 
-    void updatePassword(String name, String email, String password);
+    void updatePassword(Long userId, String newPassword);
 
     void deleteUser(Long id);
 

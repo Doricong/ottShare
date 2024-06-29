@@ -1,4 +1,4 @@
-package com.project.ottshare.dto.OttRecQuestionsDto;
+package com.project.ottshare.dto.ottRecQuestionsDto;
 
 import com.project.ottshare.enums.OttType;
 import lombok.*;

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sharingUser")
+@RequestMapping("/api/sharingUsers")
 @Slf4j
 public class SharingUserController {
 
@@ -22,8 +22,10 @@ public class SharingUserController {
     /**
      * 리더, ott 반환
      */
-    @GetMapping("/{userId}/roleAndOtt")
-    public ResponseEntity<IsLeaderAndOttResponse> getSharingUserRoleAndOttByUserId(@PathVariable("userId") Long userId) {
+    @GetMapping("/{userId}/role-and-ott")
+    public ResponseEntity<IsLeaderAndOttResponse> getUserRoleAndOtt(@PathVariable("userId") Long userId) {
+        log.info("Fetching leader and OTT information for user ID: {}", userId);
+
         IsLeaderAndOttResponse isLeaderAndOttResponse = sharingUserService.getSharingUserIsLeaderAndOttByUserId(userId)
                 .orElse(null);
         return ResponseEntity.ok(isLeaderAndOttResponse);

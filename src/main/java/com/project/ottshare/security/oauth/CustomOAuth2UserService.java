@@ -20,6 +20,7 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -27,37 +28,29 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        //OAuth 2.0 인증을 통해 사용자 정보를 가져 옴
         OAuth2UserInfo userInfo = getOAuth2UserInfo(registrationId, attributes);
 
-        //OAuth2UserInfo 객체를 기반으로 사용자를 생성
         User user = createUserFromUserInfo(userInfo);
 
         if (!userRepository.existsByUsername(user.getUsername())) {
             userRepository.save(user);
+        } else {
+            updateUser(user);
         }
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
-        return customUserDetails;
-
-
+        return new CustomUserDetails(user, attributes);
     }
 
-
     private OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {
-
-        OAuth2UserInfo userInfo = null;
-
         if (registrationId.equals("google")) {
-            userInfo = new GoogleUserInfo(attributes);
+            return new GoogleUserInfo(attributes);
         } else if (registrationId.equals("facebook")) {
-            userInfo = new FacebookUserInfo(attributes);
+            return new FacebookUserInfo(attributes);
         } else if (registrationId.equals("naver")) {
-            userInfo = new NaverUserInfo((Map<String, Object>) attributes.get("response"));
+            return new NaverUserInfo((Map<String, Object>) attributes.get("response"));
+        } else {
+            throw new OAuth2AuthenticationException("Unsupported provider: " + registrationId);
         }
-
-        return userInfo;
     }
 
     private User createUserFromUserInfo(OAuth2UserInfo userInfo) {
@@ -67,8 +60,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = userInfo.getEmail();
         Role role = Role.SOCIAL;
 
-        User user = new User(username, password, nickname, email, role);
+        return new User(username, password, nickname, email, role);
+    }
 
-        return user;
+    private void updateUser(User user) {
+        // 필요시 사용자 정보를 업데이트하는 로직 추가
+        // 예: user.setLastLogin(new Date());
+        userRepository.save(user);
     }
 }
