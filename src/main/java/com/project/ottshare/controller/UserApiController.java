@@ -37,16 +37,13 @@ public class UserApiController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginUserRequest user) {
-        log.info("로그인 시도 - 아이디: {}", user.getUsername());
         CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(user.getUsername());
-        if (!userService.authenticateUser(userDetails.getPassword(), user.getPassword())){
+        if (!userService.authenticateUser(userDetails.getPassword(), user.getPassword())) {
             throw new UserNotFoundException("잘못된 비밀번호입니다.");
         }
         String token = jwtUtil.generateToken(userDetails.getUsername());
         return ResponseEntity.ok(new JwtResponse(token));
     }
-
-
 
     /**
      * 로그아웃

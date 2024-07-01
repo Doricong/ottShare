@@ -50,9 +50,8 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
     public OttShareRoomResponse getOttShareRoom(Long id) {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
-        OttShareRoomResponse ottShareRoomResponse = new OttShareRoomResponse(ottShareRoom);
 
-        return ottShareRoomResponse;
+        return new OttShareRoomResponse(ottShareRoom);
     }
 
     /**
@@ -132,9 +131,7 @@ public class OttShareRoomServiceImpl implements OttShareRoomService{
             throw new SharingUserNotCheckedException(userId);
         }
 
-        OttShareRoomIdAndPasswordResponse ottShareRoomIdAndPasswordResponse = new OttShareRoomIdAndPasswordResponse(ottShareRoom.getOttId(), ottShareRoom.getOttPassword());
-
-        return ottShareRoomIdAndPasswordResponse;
+        return new OttShareRoomIdAndPasswordResponse(ottShareRoom.getOttId(), ottShareRoom.getOttPassword());
     }
 
     /**

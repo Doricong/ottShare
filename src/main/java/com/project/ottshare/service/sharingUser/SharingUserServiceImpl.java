@@ -57,9 +57,7 @@ public class SharingUserServiceImpl implements SharingUserService{
                     return new SharingUserNotFoundException(userId);
                 });
 
-        SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
-
-        return sharingUserResponse;
+        return new SharingUserResponse(sharingUser);
     }
 
     @Override
@@ -67,9 +65,7 @@ public class SharingUserServiceImpl implements SharingUserService{
         SharingUser sharingUser = sharingUserRepository.findById(userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
-        SharingUserResponse sharingUserResponse = new SharingUserResponse(sharingUser);
-
-        return sharingUserResponse;
+        return new SharingUserResponse(sharingUser);
     }
 
     public Optional<IsLeaderAndOttResponse> getSharingUserIsLeaderAndOttByUserId(Long userId) {

@@ -46,9 +46,8 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         //user -> userResponse
-        UserResponse userResponse = new UserResponse(user);
 
-        return userResponse;
+        return new UserResponse(user);
     }
 
     @Override

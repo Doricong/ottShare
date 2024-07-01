@@ -84,9 +84,7 @@ public class WaitingUserServiceImpl implements WaitingUserService{
         WaitingUser waitingUser = waitingUserRepository.findLeaderByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
-        WaitingUserResponse waitingUserResponse = new WaitingUserResponse(waitingUser);
-
-        return waitingUserResponse;
+        return new WaitingUserResponse(waitingUser);
     }
 
     /**
