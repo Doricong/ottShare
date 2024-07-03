@@ -76,12 +76,12 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**", "/api/users/join", "/api/users/login", "/api/authenticate", "/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/users/login")
-                        .loginProcessingUrl("/login")
-                        .successHandler(authenticationSuccessHandler)
-                        .defaultSuccessUrl("/")
-                )
+//                .formLogin(form -> form
+//                        .loginPage("/users/login")
+//                        .loginProcessingUrl("/login")
+//                        .successHandler(authenticationSuccessHandler)
+//                        .defaultSuccessUrl("/")
+//                )
                 .oauth2Login(formLogin -> formLogin
                         .loginPage("/users/login")
                         .userInfoEndpoint(user -> user.userService(oauth2UserService))
