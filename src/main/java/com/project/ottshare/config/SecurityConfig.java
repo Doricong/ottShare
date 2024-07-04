@@ -76,27 +76,14 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**", "/api/users/join", "/api/users/login", "/api/authenticate", "/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**", "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/users/login")
-//                        .loginProcessingUrl("/login")
-//                        .successHandler(authenticationSuccessHandler)
-//                        .defaultSuccessUrl("/")
-//                )
                 .oauth2Login(formLogin -> formLogin
                         .loginPage("/users/login")
                         .userInfoEndpoint(user -> user.userService(oauth2UserService))
                         .successHandler(oauth2SuccessHandler)
                         .defaultSuccessUrl("/", true)
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/api/users/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll()
                 );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        log.info("Security filter chain configured");
 
         return http.build();
     }

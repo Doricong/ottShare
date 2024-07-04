@@ -59,6 +59,7 @@ public class UserApiController {
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
+        SecurityContextHolder.clearContext();
         return ResponseEntity.ok().body("로그아웃 되었습니다.");
     }
 
