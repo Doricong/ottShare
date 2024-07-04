@@ -73,7 +73,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/ws/**", "/api/users/join", "/api/users/login", "/api/authenticate", "/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**").permitAll()
+                        .requestMatchers("/ws/**", "/api/users/join", "/api/users/login", "/api/authenticate", "/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**", "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
 //                .formLogin(form -> form

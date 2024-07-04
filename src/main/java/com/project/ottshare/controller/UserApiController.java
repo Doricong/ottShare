@@ -16,6 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,16 +37,21 @@ public class UserApiController {
     private final UserService userService;
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomValidators validators;
+    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginUserRequest user) {
-        CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(user.getUsername());
-        if (!userService.authenticateUser(userDetails.getPassword(), user.getPassword())) {
-            throw new UserNotFoundException("잘못된 비밀번호입니다.");
-        }
-        String token = jwtUtil.generateToken(userDetails.getUsername());
-        return ResponseEntity.ok(new JwtResponse(token));
+    public ResponseEntity<?> loginUser(@RequestBody LoginUserRequest userRequest) {
+        Authentication authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        String token = jwtUtil.generateToken(userRequest.getUsername());
+        Long expiration = jwtUtil.getExpiration();
+
+        JwtResponse jwtResponse = new JwtResponse(token, userRequest.getUsername(), expiration);
+
+        return ResponseEntity.ok(jwtResponse);
     }
 
     /**
@@ -177,14 +186,16 @@ public class UserApiController {
         if (existingUser.isPresent()) {
             if (existingUser.get().getRole() == Role.SOCIAL) {
                 String token = jwtUtil.generateToken(existingUser.get().getUsername());
-                return ResponseEntity.ok(new JwtResponse(token));
+                Long expiresIn = jwtUtil.getExpiration(); // Use the same expiration time as in the login method
+                return ResponseEntity.ok(new JwtResponse(token, existingUser.get().getUsername(), expiresIn));
             }
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 이메일입니다. 일반 로그인을 사용하세요.");
         } else {
             userService.createUser(userInfo.toUserRequest());
             CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(userInfo.getUsername());
             String token = jwtUtil.generateToken(userDetails.getUsername());
-            return ResponseEntity.ok(new JwtResponse(token));
+            Long expiresIn = jwtUtil.getExpiration(); // Use the same expiration time as in the login method
+            return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), expiresIn));
         }
     }
 }

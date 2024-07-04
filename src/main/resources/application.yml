@@ -46,5 +46,5 @@ server:
       force-request: true
 
 jwt:
-  secret: a_very_secret_key_that_is_long_and_complex_1234567890
+  secret: 64461f01e1af406da538b9c48d801ce59142452199ff112fb5404c8e7e98e3ff
   expiration: 3600
