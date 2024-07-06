@@ -68,12 +68,14 @@ public class SecurityConfig {
         return source;
     }
 
+    // 다음 경로들 허용 해줘야하는지 테스트 해야함.
+    // "/ws/**",  "/api/authenticate", "/chat/**", "/app/**", "/topic/**"
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/ws/**", "/api/users/join", "/api/users/login", "/api/authenticate", "/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**", "/api/**").permitAll()
+                        .requestMatchers("/websocket/**", "/api/users", "/api/ottRecQuestions/**", "/api/users/login", "/api/users/send-verification-code", "/api/users/find-username", "/api/users/find-password", "/api/users/google-login", "/api/users/kakao-login", "/faqs").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(formLogin -> formLogin

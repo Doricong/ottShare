@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JwtResponse {
+//    private String grantType;
     private String token;
     private String username;
     private Long expiresIn;

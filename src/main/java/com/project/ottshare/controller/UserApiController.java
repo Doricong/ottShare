@@ -68,7 +68,7 @@ public class UserApiController {
      */
     @PostMapping
     public ResponseEntity<?> registerUser(@Validated(ValidationSequence.class) @RequestBody UserRequest dto,
-                                      BindingResult bindingResult) {
+                                          BindingResult bindingResult) {
         //유효성 검사
         validators.joinValidateAll(dto, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -102,8 +102,8 @@ public class UserApiController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable("userId") Long id,
-                                    @Validated(ValidationSequence.class) @RequestBody UserSimpleRequest dto,
-                                    BindingResult bindingResult) {
+                                               @Validated(ValidationSequence.class) @RequestBody UserSimpleRequest dto,
+                                               BindingResult bindingResult) {
 //        validators.modifyValidateAll(userRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             // 모든 오류 메시지를 반환
