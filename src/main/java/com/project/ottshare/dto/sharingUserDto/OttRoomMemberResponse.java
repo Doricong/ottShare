@@ -1,6 +1,5 @@
 package com.project.ottshare.dto.sharingUserDto;
 
-import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.userDto.UserResponse;
 import com.project.ottshare.entity.SharingUser;
 import lombok.AllArgsConstructor;

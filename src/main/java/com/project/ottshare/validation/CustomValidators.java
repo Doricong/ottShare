@@ -110,7 +110,7 @@ public class CustomValidators{
             String currentNickname = getCurrentNickname();
 
             //회원 수정 시에는 현재 사용자와 수정 대상의 닉네임이 다르고, 중복되는지 확인
-            if (!currentNickname.equals(dto.getNickname()) && userRepository.existsByNickname(dto.getNickname())) {
+            if (!dto.getNickname().equals(currentNickname) && userRepository.existsByNickname(dto.getNickname())) {
                 errors.rejectValue("nickname", "닉네임 중복 오류", "이미 사용중인 닉네임 입니다.");
             }
         }
@@ -122,6 +122,4 @@ public class CustomValidators{
             return null;
         }
     }
-
-
 }

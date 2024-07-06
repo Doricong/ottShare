@@ -1,9 +1,10 @@
 package com.project.ottshare.config;
 
-import com.project.ottshare.security.auth.CustomAuthenticationSuccessHandler;
 import com.project.ottshare.security.auth.JwtFilter;
 import com.project.ottshare.security.oauth.CustomOAuth2AuthenticationSuccessHandler;
 import com.project.ottshare.security.oauth.CustomOAuth2UserService;
+import com.project.ottshare.security.oauth.JwtAuthenticationFilter;
+import com.project.ottshare.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -24,6 +25,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -36,7 +38,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService oauth2UserService;
     private final JwtFilter jwtFilter;
     private final CustomOAuth2AuthenticationSuccessHandler oauth2SuccessHandler;
-    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -57,9 +59,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
@@ -83,7 +85,8 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                 );
 
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

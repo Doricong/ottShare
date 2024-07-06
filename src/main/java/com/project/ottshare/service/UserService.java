@@ -1,4 +1,4 @@
-package com.project.ottshare.service.user;
+package com.project.ottshare.service;
 
 import com.project.ottshare.config.SmsUtil;
 import com.project.ottshare.dto.userDto.*;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService{
+public class UserService {
 
     private final UserRepository userRepository;
     private final SmsUtil smsUtil;
@@ -30,27 +30,23 @@ public class UserServiceImpl implements UserService{
     /**
      * 회원가입
      */
-    @Override
     @Transactional
-    public void createUser(UserRequest userRequest) {
+    public UserResponse createUser(UserRequest userRequest) {
         //password 인코딩
         userRequest.setPassword(encoder.encode(userRequest.getPassword()));
-        //userRequest -> user
         User user = userRequest.toEntity();
-        //user 저장
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return new UserResponse(savedUser);
     }
 
-    @Override
     public UserResponse getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        //user -> userResponse
 
         return new UserResponse(user);
     }
 
-    @Override
     public String getUsername(String name, String phoneNumber) {
         User user = userRepository.findByNameAndPhoneNumber(name, phoneNumber)
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
@@ -61,7 +57,6 @@ public class UserServiceImpl implements UserService{
     /**
      * 비밀번호 찾기
      */
-    @Override
     public UserResponse findUserForPasswordReset(String name, String username, String email) {
         User user = userRepository.findByNameAndUsernameAndEmail(name, username, email)
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
@@ -70,7 +65,6 @@ public class UserServiceImpl implements UserService{
 
     }
 
-    @Override
     @Transactional
     public void updateUser(UserSimpleRequest userSimpleRequest) {
         User user = userRepository.findById(userSimpleRequest.getId())
@@ -80,7 +74,6 @@ public class UserServiceImpl implements UserService{
         user.update(userSimpleRequest.getUsername(), encoder.encode(userSimpleRequest.getPassword()), userSimpleRequest.getNickname(), userSimpleRequest.getAccount(), userSimpleRequest.getAccountHolder(), userSimpleRequest.getBank());
     }
 
-    @Override
     @Transactional
     public void updatePassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
@@ -90,7 +83,6 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
     }
 
-    @Override
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
@@ -103,7 +95,6 @@ public class UserServiceImpl implements UserService{
     /**
      * 인증 번호 전송
      */
-    @Override
     @Transactional
     public void sendSmsToFindEmail(VerifyCodeRequest verifyCodeRequest) {
         String name = verifyCodeRequest.getName();
@@ -122,7 +113,6 @@ public class UserServiceImpl implements UserService{
     /**
      * 인증 번호 확인
      */
-    @Override
     public void verifySms(CheckCodeRequest checkCodeRequest) {
         if (!isVerify(checkCodeRequest)) {
             throw new SmsCertificationNumberMismatchException("인증번호가 일치하지 않습니다.");
@@ -131,12 +121,10 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    @Override
     public boolean authenticateUser(String userDetailsPassword, String password) {
         return encoder.matches(password, userDetailsPassword);
     }
 
-    @Override
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }

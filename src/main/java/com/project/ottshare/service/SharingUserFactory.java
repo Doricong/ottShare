@@ -1,4 +1,4 @@
-package com.project.ottshare.service.ottShareRoom;
+package com.project.ottshare.service;
 
 import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.SharingUser;

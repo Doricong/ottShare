@@ -3,6 +3,7 @@ package com.project.ottshare.security.auth;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.BankType;
 import com.project.ottshare.enums.Role;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+@Getter
 public class CustomUserDetails implements UserDetails, OAuth2User {
 
     private User user;
@@ -38,10 +40,6 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
 
     public String getNickname() {
         return user.getNickname();
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public String getPhoneNumber() {

@@ -1,6 +1,7 @@
 package com.project.ottshare.dto.ottRecQuestionsDto;
 
 import com.project.ottshare.enums.OttType;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter

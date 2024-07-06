@@ -1,4 +1,4 @@
-package com.project.ottshare.service.message;
+package com.project.ottshare.service;
 
 import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
 import com.project.ottshare.dto.ottShareRoomDto.MessageResponse;
@@ -18,18 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MessageServiceImpl implements MessageService{
+public class MessageService {
 
     private final MessageRepository messageRepository;
 
-    @Override
     @Transactional
     public void createMessage(MessageRequest messageRequest) {
         Message entity = messageRequest.toEntity();
         messageRepository.save(entity);
     }
 
-    @Override
     public Page<MessageResponse> getMessages(Long roomId) {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
         Page<Message> messages = messageRepository.findAllByOttShareRoomIdOrderByCreatedDate(roomId, pageable);

@@ -1,4 +1,4 @@
-package com.project.ottshare.service.sharingUser;
+package com.project.ottshare.service;
 
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
@@ -16,40 +16,38 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class SharingUserServiceImpl implements SharingUserService{
+public class SharingUserService {
 
     private final SharingUserRepository sharingUserRepository;
 
-    @Override
     @Transactional
     public List<SharingUser> prepareSharingUsers(List<WaitingUserResponse> responses) {
-        List<SharingUser> sharingUsers = new ArrayList<>();
-        for (WaitingUserResponse member : responses) {
-            SharingUser entity = member.toEntity();
-            sharingUsers.add(entity);
-            entity.getUser().checkShareRoom();
-        }
+        List<SharingUser> sharingUsers = responses.stream()
+                .map(member -> {
+                    SharingUser entity = member.toEntity();
+                    entity.getUser().checkShareRoom();
+                    return entity;
+                })
+                .collect(Collectors.toList());
+
         log.info("Prepared {} sharing users", sharingUsers.size());
         return sharingUsers;
     }
 
-    @Override
     @Transactional
     public void associateRoomWithSharingUsers(List<SharingUser> sharingUsers, OttShareRoomResponse room) {
         OttShareRoom entity = room.toEntity();
+        sharingUsers.forEach(sharingUser -> sharingUser.addRoom(entity));
 
-        for (SharingUser sharingUser : sharingUsers) {
-            sharingUser.addRoom(entity);
-        }
         log.info("Associated room ID {} with {} sharing users", room.getId(), sharingUsers.size());
     }
 
-    @Override
     public SharingUserResponse getSharingUserByUserId(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
                 .orElseThrow(() -> {
@@ -60,7 +58,6 @@ public class SharingUserServiceImpl implements SharingUserService{
         return new SharingUserResponse(sharingUser);
     }
 
-    @Override
     public SharingUserResponse getSharingUser(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findById(userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));

@@ -25,7 +25,6 @@ public class OttShareRoomResponse {
     private String ottId;
     private String ottPassword;
 
-    // Constructor that initializes with OttShareRoom entity
     public OttShareRoomResponse(OttShareRoom ottShareRoom) {
         this.id = ottShareRoom.getId();
         this.ottRoomMemberResponses = ottShareRoom.getSharingUsers().stream()

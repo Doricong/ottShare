@@ -9,9 +9,9 @@ import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.exception.OttLeaderNotFoundException;
 import com.project.ottshare.exception.OttNonLeaderNotFoundException;
 import com.project.ottshare.exception.UserNotFoundException;
-import com.project.ottshare.service.ottShareRoom.OttShareRoomService;
-import com.project.ottshare.service.sharingUser.SharingUserService;
-import com.project.ottshare.service.waitingUser.WaitingUserService;
+import com.project.ottshare.service.OttShareRoomService;
+import com.project.ottshare.service.SharingUserService;
+import com.project.ottshare.service.WaitingUserService;
 import com.project.ottshare.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,20 +36,12 @@ public class WaitingUserApiController {
      */
     @PostMapping
     public ResponseEntity<String> createWaitingUser(@Validated(ValidationSequence.class) @RequestBody WaitingUserRequest dto) {
-        // 사용자 정보 저장
         log.info("Saving user data: {}", dto.getOtt());
         waitingUserService.createWaitingUser(dto);
+        createRoomIfPossible(dto);
 
-        try {
-            createRoomIfPossible(dto);
-            log.info("Room created successfully for OTT service: {}", dto.getOtt());
+        return ResponseEntity.ok("Room created successfully.");
 
-            return ResponseEntity.ok("Room created successfully.");
-        } catch (OttNonLeaderNotFoundException e) {
-            return ResponseEntity.ok("팀원이 아직 다 안 모였습니다");
-        } catch (OttLeaderNotFoundException e) {
-            return ResponseEntity.ok("방장이 아직 없습니다");
-        }
     }
 
     /**
@@ -71,6 +63,7 @@ public class WaitingUserApiController {
         log.info("Fetching waiting user ID for user ID: {}", userId);
         Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userId));
+
         return ResponseEntity.ok(waitingUserId);
     }
 
