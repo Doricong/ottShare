@@ -3,12 +3,10 @@ package com.project.ottshare.security.oauth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ottshare.dto.userDto.LoginUserRequest;
 import com.project.ottshare.util.JwtUtil;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,15 +17,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 
 @Slf4j
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    @PostConstruct
-    public void init() {
-        setFilterProcessesUrl("/api/users/login");  // 커스텀 로그인 경로 설정
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        setFilterProcessesUrl("/api/users/login");
     }
 
     @Override
