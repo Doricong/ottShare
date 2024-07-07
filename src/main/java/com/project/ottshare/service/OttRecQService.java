@@ -24,6 +24,6 @@ public class OttRecQService {
         OttRecQuestions ottRecQuestions = ottRecQuestionsRepository.findById(id)
                 .orElseThrow(() -> new OttRecQNotFoundException(id));
 
-        return OttRecQResponse.from(ottRecQuestions);
+        return new OttRecQResponse(ottRecQuestions);
     }
 }

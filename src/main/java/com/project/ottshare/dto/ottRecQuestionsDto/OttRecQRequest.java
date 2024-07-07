@@ -19,4 +19,6 @@ public class OttRecQRequest {
     private OttType firstQuestionOttType;
 
     private OttType secondQuestionOttType;
+
+
 }

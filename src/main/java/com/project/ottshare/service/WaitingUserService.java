@@ -76,7 +76,7 @@ public class WaitingUserService {
         WaitingUser waitingUser = waitingUserRepository.findLeaderByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
-        return WaitingUserResponse.from(waitingUser);
+        return new WaitingUserResponse(waitingUser);
     }
 
     /**
@@ -91,7 +91,7 @@ public class WaitingUserService {
         }
 
         return waitingUsers.stream()
-                .map(WaitingUserResponse::from)
+                .map(WaitingUserResponse::new)
                 .collect(Collectors.toList());
     }
 

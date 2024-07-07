@@ -50,7 +50,7 @@ public class OttShareRoomService {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
 
-        return OttShareRoomResponse.from(ottShareRoom);
+        return new OttShareRoomResponse(ottShareRoom);
     }
 
     /**

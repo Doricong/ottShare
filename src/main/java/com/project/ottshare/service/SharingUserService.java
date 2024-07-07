@@ -51,14 +51,14 @@ public class SharingUserService {
         SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
-        return SharingUserResponse.from(sharingUser);
+        return new SharingUserResponse(sharingUser);
     }
 
     public SharingUserResponse getSharingUser(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findById(userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
-        return SharingUserResponse.from(sharingUser);
+        return new SharingUserResponse(sharingUser);
     }
 
     public Optional<IsLeaderAndOttResponse> getSharingUserIsLeaderAndOttByUserId(Long userId) {

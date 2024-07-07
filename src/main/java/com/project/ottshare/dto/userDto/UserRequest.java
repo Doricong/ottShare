@@ -52,18 +52,17 @@ public class UserRequest {
 
     private Role role;
 
-    public static UserRequest from(UserInfo userInfo) {
-        return UserRequest.builder()
-                .name(userInfo.getName())
-                .username(userInfo.getUsername())
-                .password(userInfo.getPassword())
-                .nickname(userInfo.getNickname())
-                .email(userInfo.getEmail())
-                .phoneNumber(userInfo.getPhoneNumber())
-                .bank(userInfo.getBank())
-                .account(userInfo.getAccount())
-                .accountHolder(userInfo.getAccountHolder())
-                .role(userInfo.getRole())
-                .build();
+
+    public UserRequest(UserInfo userInfo) {
+        this.name = userInfo.getName();
+        this.username = userInfo.getUsername();
+        this.password = userInfo.getPassword();
+        this.nickname = userInfo.getNickname();
+        this.email = userInfo.getEmail();
+        this.phoneNumber = userInfo.getPhoneNumber();
+        this.bank = userInfo.getBank();
+        this.account = userInfo.getAccount();
+        this.accountHolder = userInfo.getAccountHolder();
+        this.role = userInfo.getRole();
     }
 }

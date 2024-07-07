@@ -37,20 +37,18 @@ public class UserResponse {
 
     private boolean isShareRoom;
 
-    public static UserResponse from(User user) {
-        return UserResponse.builder()
-                .userId(user.getUserId())
-                .name(user.getName())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .phoneNumber(user.getPhoneNumber())
-                .bank(user.getBank())
-                .account(user.getAccount())
-                .accountHolder(user.getAccountHolder())
-                .role(user.getRole())
-                .isShareRoom(user.isShareRoom())
-                .build();
+    public UserResponse(User user) {
+        this.userId = user.getUserId();
+        this.name = user.getName();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.email = user.getEmail();
+        this.nickname = user.getNickname();
+        this.phoneNumber = user.getPhoneNumber();
+        this.bank = user.getBank();
+        this.account = user.getAccount();
+        this.accountHolder = user.getAccountHolder();
+        this.role = user.getRole();
+        this.isShareRoom = user.isShareRoom();
     }
 }

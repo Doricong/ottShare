@@ -23,17 +23,14 @@ public class OttShareRoomResponse {
     private String ottId;
     private String ottPassword;
 
-
-    public static OttShareRoomResponse from(OttShareRoom ottShareRoom) {
-        return OttShareRoomResponse.builder()
-                .id(ottShareRoom.getId())
-                .ottRoomMemberResponses(ottShareRoom.getSharingUsers().stream()
-                        .map(OttRoomMemberResponse::from)
-                        .collect(Collectors.toList()))
-                .ott(ottShareRoom.getOtt())
-                .ottId(ottShareRoom.getOttId())
-                .ottPassword(ottShareRoom.getOttPassword())
-                .build();
+    public OttShareRoomResponse(OttShareRoom ottShareRoom) {
+        this.id = ottShareRoom.getId();
+        this.ottRoomMemberResponses = ottShareRoom.getSharingUsers().stream()
+                .map(OttRoomMemberResponse::new)
+                .collect(Collectors.toList());
+        this.ott = ottShareRoom.getOtt();
+        this.ottId = ottShareRoom.getOttId();
+        this.ottPassword = ottShareRoom.getOttPassword();
     }
 
 

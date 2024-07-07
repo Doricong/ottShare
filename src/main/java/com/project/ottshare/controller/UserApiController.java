@@ -177,7 +177,7 @@ public class UserApiController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 이메일입니다. 일반 로그인을 사용하세요.");
             }
         } catch (UsernameNotFoundException e) {
-            UserResponse newUserResponse = userService.createUser(UserRequest.from(userInfo));
+            UserResponse newUserResponse = userService.createUser(new UserRequest(userInfo));
             return generateJwtResponse(newUserResponse.getUsername());
         }
     }
