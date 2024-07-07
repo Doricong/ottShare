@@ -1,5 +1,8 @@
 package com.project.ottshare.entity;
 
+import com.project.ottshare.dto.sharingUserDto.OttRoomMemberResponse;
+import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
+import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -55,4 +58,34 @@ public class SharingUser extends BaseTimeEntity {
     public void setOttShareRoom(OttShareRoom room) {
         this.ottShareRoom = room;
     }
+
+    public static SharingUser from(OttRoomMemberResponse response) {
+        return SharingUser.builder()
+                .id(response.getId())
+                .user(User.from(response.getUser()))
+                .isLeader(response.isLeader())
+                .isChecked(response.isChecked())
+                .build();
+    }
+
+    public static SharingUser from(SharingUserResponse response) {
+        return SharingUser.builder()
+                .id(response.getId())
+                .user(User.from(response.getUser()))
+                .ottShareRoom(OttShareRoom.from(response.getOttShareRoom()))
+                .isLeader(response.isLeader())
+                .isChecked(response.isChecked())
+                .build();
+    }
+
+    public static SharingUser from(WaitingUserResponse response) {
+        return SharingUser.builder()
+                .user(response.getUser())
+                .isLeader(response.isLeader())
+                .ottShareRoom(null)
+                .build();
+    }
+
+
+
 }

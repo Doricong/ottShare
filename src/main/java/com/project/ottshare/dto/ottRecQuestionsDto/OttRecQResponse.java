@@ -2,13 +2,11 @@ package com.project.ottshare.dto.ottRecQuestionsDto;
 
 import com.project.ottshare.entity.OttRecQuestions;
 import com.project.ottshare.enums.OttType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OttRecQResponse {
@@ -23,11 +21,13 @@ public class OttRecQResponse {
 
     private OttType secondQuestionOttType;
 
-    public OttRecQResponse(OttRecQuestions ottRecQuestions) {
-        this.id = ottRecQuestions.getId();
-        this.firstQuestion = ottRecQuestions.getFirstQuestion();
-        this.secondQuestion = ottRecQuestions.getSecondQuestion();
-        this.firstQuestionOttType = ottRecQuestions.getFirstQuestionOttType();
-        this.secondQuestionOttType = ottRecQuestions.getSecondQuestionOttType();
+    public static OttRecQResponse from(OttRecQuestions ottRecQuestions) {
+        return OttRecQResponse.builder()
+                .id(ottRecQuestions.getId())
+                .firstQuestion(ottRecQuestions.getFirstQuestion())
+                .secondQuestion(ottRecQuestions.getSecondQuestion())
+                .firstQuestionOttType(ottRecQuestions.getFirstQuestionOttType())
+                .secondQuestionOttType(ottRecQuestions.getSecondQuestionOttType())
+                .build();
     }
 }

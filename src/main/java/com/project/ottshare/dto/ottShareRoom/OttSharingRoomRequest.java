@@ -20,13 +20,4 @@ public class OttSharingRoomRequest {
     private List<SharingUser> sharingUsers = new ArrayList<>();
 
     private OttType ott;
-
-    public OttShareRoom toEntity(OttSharingRoomRequest ottSharingRoomRequest) {
-        OttShareRoom ottShareRoom = OttShareRoom.builder()
-                .sharingUsers(ottSharingRoomRequest.getSharingUsers())
-                .ott(ottSharingRoomRequest.getOtt())
-                .build();
-
-        return ottShareRoom;
-    }
 }

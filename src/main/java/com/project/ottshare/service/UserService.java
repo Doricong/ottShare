@@ -34,17 +34,17 @@ public class UserService {
     public UserResponse createUser(UserRequest userRequest) {
         //password 인코딩
         userRequest.setPassword(encoder.encode(userRequest.getPassword()));
-        User user = userRequest.toEntity();
+        User user = User.from(userRequest);
         User savedUser = userRepository.save(user);
 
-        return new UserResponse(savedUser);
+        return UserResponse.from(savedUser);
     }
 
     public UserResponse getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        return new UserResponse(user);
+        return UserResponse.from(user);
     }
 
     public String getUsername(String name, String phoneNumber) {
@@ -61,7 +61,7 @@ public class UserService {
         User user = userRepository.findByNameAndUsernameAndEmail(name, username, email)
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다."));
 
-        return new UserResponse(user);
+        return UserResponse.from(user);
 
     }
 

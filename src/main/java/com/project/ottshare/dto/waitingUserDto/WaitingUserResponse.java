@@ -5,12 +5,14 @@ import com.project.ottshare.entity.User;
 import com.project.ottshare.entity.WaitingUser;
 import com.project.ottshare.enums.OttType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class WaitingUserResponse {
 
     private Long id;
@@ -25,22 +27,16 @@ public class WaitingUserResponse {
 
     private boolean isLeader;
 
-    public WaitingUserResponse(WaitingUser waitingUser) {
-        this.id = waitingUser.getId();
-        this.user = waitingUser.getUser();
-        this.ott = waitingUser.getOtt();
-        this.ottId = waitingUser.getOttId();
-        this.ottPassword = waitingUser.getOttPassword();
-        this.isLeader = waitingUser.isLeader();
-    }
 
-    public SharingUser toEntity() {
-        SharingUser sharingUser = SharingUser.builder()
-                .user(user)
-                .isLeader(isLeader)
+    public static WaitingUserResponse from(WaitingUser waitingUser) {
+        return WaitingUserResponse.builder()
+                .id(waitingUser.getId())
+                .user(waitingUser.getUser())
+                .ott(waitingUser.getOtt())
+                .ottId(waitingUser.getOttId())
+                .ottPassword(waitingUser.getOttPassword())
+                .isLeader(waitingUser.isLeader())
                 .build();
-
-        return sharingUser;
     }
 
 }

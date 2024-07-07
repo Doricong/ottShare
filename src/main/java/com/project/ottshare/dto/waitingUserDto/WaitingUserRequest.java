@@ -28,15 +28,4 @@ public class WaitingUserRequest {
     @NotNull(message = "leader 선택은 필수 입니다.", groups = ValidationGroups.NotBlankGroups.class)
     private Boolean isLeader;
 
-    public WaitingUser toEntity(User user) {
-        WaitingUser waitingUser = WaitingUser.builder()
-                .user(user)
-                .ott(ott)
-                .ottId(isLeader ? ottId : null) // leader일 경우에만 OTT 정보 저장
-                .ottPassword(isLeader ? ottPassword : null)
-                .isLeader(isLeader)
-                .build();
-
-        return waitingUser;
-    }
 }

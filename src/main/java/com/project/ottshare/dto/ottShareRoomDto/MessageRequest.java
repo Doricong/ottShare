@@ -29,14 +29,4 @@ public class MessageRequest {
     @NotNull(message = "Message cannot be null")
     private String message;
 
-    public Message toEntity() {
-        OttShareRoom roomEntity = ottShareRoom.toEntity(); // DTO를 엔터티로 변환
-        SharingUser userEntity = ottRoomMemberResponse.toEntity();
-
-        return Message.builder()
-                .ottShareRoom(roomEntity)
-                .sharingUser(userEntity)
-                .message(message)
-                .build();
-    }
 }

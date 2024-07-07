@@ -38,7 +38,7 @@ public class WaitingUserService {
         User user = userRepository.findByUsername(waitingUserRequest.getUserInfo().getUsername())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을수 없습니다."));
 
-        WaitingUser waitingUser = waitingUserRequest.toEntity(user);
+        WaitingUser waitingUser = WaitingUser.from(waitingUserRequest, user);
         waitingUserRepository.save(waitingUser);
     }
 
@@ -76,7 +76,7 @@ public class WaitingUserService {
         WaitingUser waitingUser = waitingUserRepository.findLeaderByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
-        return new WaitingUserResponse(waitingUser);
+        return WaitingUserResponse.from(waitingUser);
     }
 
     /**
@@ -91,7 +91,7 @@ public class WaitingUserService {
         }
 
         return waitingUsers.stream()
-                .map(WaitingUserResponse::new)
+                .map(WaitingUserResponse::from)
                 .collect(Collectors.toList());
     }
 

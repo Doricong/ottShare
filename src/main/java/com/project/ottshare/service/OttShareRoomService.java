@@ -38,8 +38,8 @@ public class OttShareRoomService {
      * ott 공유방 생성
      */
     @Transactional
-    public Long createOttShareRoom(OttSharingRoomRequest ottSharingRoomRequests) {
-        OttShareRoom entity = ottSharingRoomRequests.toEntity();
+    public Long createOttShareRoom(OttSharingRoomRequest ottSharingRoomRequest) {
+        OttShareRoom entity = OttShareRoom.from(ottSharingRoomRequest);
         OttShareRoom savedOttShareRoom = ottShareRoomRepository.save(entity);
         log.info("Saved OttShareRoom with ID: {}", savedOttShareRoom.getId());
 
@@ -50,7 +50,7 @@ public class OttShareRoomService {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
 
-        return new OttShareRoomResponse(ottShareRoom);
+        return OttShareRoomResponse.from(ottShareRoom);
     }
 
     /**

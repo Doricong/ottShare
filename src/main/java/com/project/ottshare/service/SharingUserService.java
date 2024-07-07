@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +29,7 @@ public class SharingUserService {
     public List<SharingUser> prepareSharingUsers(List<WaitingUserResponse> responses) {
         List<SharingUser> sharingUsers = responses.stream()
                 .map(member -> {
-                    SharingUser entity = member.toEntity();
+                    SharingUser entity = SharingUser.from(member);
                     entity.getUser().checkShareRoom();
                     return entity;
                 })
@@ -42,7 +41,7 @@ public class SharingUserService {
 
     @Transactional
     public void associateRoomWithSharingUsers(List<SharingUser> sharingUsers, OttShareRoomResponse room) {
-        OttShareRoom entity = room.toEntity();
+        OttShareRoom entity = OttShareRoom.from(room);
         sharingUsers.forEach(sharingUser -> sharingUser.addRoom(entity));
 
         log.info("Associated room ID {} with {} sharing users", room.getId(), sharingUsers.size());
@@ -50,19 +49,16 @@ public class SharingUserService {
 
     public SharingUserResponse getSharingUserByUserId(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
-                .orElseThrow(() -> {
-                    log.error("SharingUser not found with userId: {}", userId);
-                    return new SharingUserNotFoundException(userId);
-                });
+                .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
-        return new SharingUserResponse(sharingUser);
+        return SharingUserResponse.from(sharingUser);
     }
 
     public SharingUserResponse getSharingUser(Long userId) {
         SharingUser sharingUser = sharingUserRepository.findById(userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
-        return new SharingUserResponse(sharingUser);
+        return SharingUserResponse.from(sharingUser);
     }
 
     public Optional<IsLeaderAndOttResponse> getSharingUserIsLeaderAndOttByUserId(Long userId) {

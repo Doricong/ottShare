@@ -26,14 +26,4 @@ public class OttSharingRoomRequest {
 
     private String ottPassword;
 
-    public OttShareRoom toEntity() {
-        OttShareRoom ottShareRoom = OttShareRoom.builder()
-                .sharingUsers(getSharingUsers())
-                .ott(getOtt())
-                .ottId(getOttId())
-                .ottPassword(getOttPassword())
-                .build();
-
-        return ottShareRoom;
-    }
 }
