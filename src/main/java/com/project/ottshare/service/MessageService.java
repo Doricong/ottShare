@@ -29,7 +29,7 @@ public class MessageService {
     public Page<MessageResponse> getMessages(Long roomId) {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
         Page<Message> messages = messageRepository.findAllByOttShareRoomIdOrderByCreatedDate(roomId, pageable);
-        return messages.map(MessageResponse::new);
+        return messages.map(MessageResponse::from);
     }
 
 }

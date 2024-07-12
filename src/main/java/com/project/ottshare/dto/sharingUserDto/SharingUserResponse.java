@@ -26,12 +26,13 @@ public class SharingUserResponse {
 
     private boolean isChecked;
 
-
-    public SharingUserResponse(SharingUser sharingUser) {
-        this.id = sharingUser.getId();
-        this.user = new UserResponse(sharingUser.getUser());
-        this.ottShareRoom = new OttShareRoomResponse(sharingUser.getOttShareRoom());
-        this.isLeader = sharingUser.isLeader();
-        this.isChecked = sharingUser.isChecked();
+    public static SharingUserResponse from(SharingUser sharingUser) {
+        return SharingUserResponse.builder()
+                .id(sharingUser.getId())
+                .user(UserResponse.from(sharingUser.getUser()))
+                .ottShareRoom(OttShareRoomResponse.from(sharingUser.getOttShareRoom()))
+                .isLeader(sharingUser.isLeader())
+                .isChecked(sharingUser.isChecked())
+                .build();
     }
 }

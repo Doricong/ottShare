@@ -21,11 +21,13 @@ public class OttRecQResponse {
 
     private OttType secondQuestionOttType;
 
-    public OttRecQResponse(OttRecQuestions ottRecQuestions) {
-        this.id = ottRecQuestions.getId();
-        this.firstQuestion = ottRecQuestions.getFirstQuestion();
-        this.secondQuestion = ottRecQuestions.getSecondQuestion();
-        this.firstQuestionOttType = ottRecQuestions.getFirstQuestionOttType();
-        this.secondQuestionOttType = ottRecQuestions.getSecondQuestionOttType();
+    public static OttRecQResponse from(OttRecQuestions ottRecQuestions) {
+        return OttRecQResponse.builder()
+                .id(ottRecQuestions.getId())
+                .firstQuestion(ottRecQuestions.getFirstQuestion())
+                .secondQuestion(ottRecQuestions.getSecondQuestion())
+                .firstQuestionOttType(ottRecQuestions.getFirstQuestionOttType())
+                .secondQuestionOttType(ottRecQuestions.getSecondQuestionOttType())
+                .build();
     }
 }

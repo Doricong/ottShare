@@ -27,13 +27,15 @@ public class WaitingUserResponse {
 
     private boolean isLeader;
 
-    public WaitingUserResponse(WaitingUser waitingUser) {
-        this.id = waitingUser.getId();
-        this.user = waitingUser.getUser();
-        this.ott = waitingUser.getOtt();
-        this.ottId = waitingUser.getOttId();
-        this.ottPassword = waitingUser.getOttPassword();
-        this.isLeader = waitingUser.isLeader();
+    public static WaitingUserResponse from(WaitingUser waitingUser) {
+        return WaitingUserResponse.builder()
+                .id(waitingUser.getId())
+                .user(waitingUser.getUser())
+                .ott(waitingUser.getOtt())
+                .ottId(waitingUser.getOttId())
+                .ottPassword(waitingUser.getOttPassword())
+                .isLeader(waitingUser.isLeader())
+                .build();
     }
 
 }

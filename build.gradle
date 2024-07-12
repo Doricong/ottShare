@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	implementation 'net.nurigo:sdk:4.3.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis' //redis
+	implementation 'org.redisson:redisson-spring-boot-starter:3.16.7'
 	compileOnly 'org.projectlombok:lombok'
 	implementation 'mysql:mysql-connector-java:8.0.29' // 변경
 	annotationProcessor 'org.projectlombok:lombok'

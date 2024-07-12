@@ -20,10 +20,12 @@ public class OttRoomMemberResponse {
 
     private boolean isChecked;
 
-    public OttRoomMemberResponse(SharingUser sharingUser) {
-        this.id = sharingUser.getId();
-        this.user = new UserResponse(sharingUser.getUser());
-        this.isLeader = sharingUser.isLeader();
-        this.isChecked = sharingUser.isChecked();
+    public static OttRoomMemberResponse from(SharingUser sharingUser) {
+        return OttRoomMemberResponse.builder()
+                .id(sharingUser.getId())
+                .user(UserResponse.from(sharingUser.getUser()))
+                .isLeader(sharingUser.isLeader())
+                .isChecked(sharingUser.isChecked())
+                .build();
     }
 }

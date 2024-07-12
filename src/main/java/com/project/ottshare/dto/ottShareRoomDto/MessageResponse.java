@@ -21,11 +21,13 @@ public class MessageResponse {
 
     private String message;
 
-    public MessageResponse(Message message) {
-        this.id = message.getId();
-        this.ottShareRoom = new OttShareRoomResponse(message.getOttShareRoom());
-        this.ottRoomMemberResponse = new OttRoomMemberResponse(message.getSharingUser());
-        this.message = message.getMessage();
+    public static MessageResponse from(Message message) {
+        return MessageResponse.builder()
+                .id(message.getId())
+                .ottShareRoom(OttShareRoomResponse.from(message.getOttShareRoom()))
+                .ottRoomMemberResponse(OttRoomMemberResponse.from(message.getSharingUser()))
+                .message(message.getMessage())
+                .build();
     }
 
 }

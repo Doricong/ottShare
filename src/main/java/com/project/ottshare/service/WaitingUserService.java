@@ -1,5 +1,6 @@
 package com.project.ottshare.service;
 
+import com.project.ottshare.aop.DistributeLock;
 import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
@@ -34,6 +35,7 @@ public class WaitingUserService {
      * user 저장
      */
     @Transactional
+    @DistributeLock(key = "#waitingUserRequest.userInfo.username")
     public void createWaitingUser(WaitingUserRequest waitingUserRequest) {
         User user = userRepository.findByUsername(waitingUserRequest.getUserInfo().getUsername())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을수 없습니다."));
@@ -76,7 +78,7 @@ public class WaitingUserService {
         WaitingUser waitingUser = waitingUserRepository.findLeaderByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
-        return new WaitingUserResponse(waitingUser);
+        return WaitingUserResponse.from(waitingUser);
     }
 
     /**
@@ -91,7 +93,7 @@ public class WaitingUserService {
         }
 
         return waitingUsers.stream()
-                .map(WaitingUserResponse::new)
+                .map(WaitingUserResponse::from)
                 .collect(Collectors.toList());
     }
 

@@ -1,5 +1,6 @@
 package com.project.ottshare.service;
 
+import com.project.ottshare.aop.DistributeLock;
 import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
@@ -32,7 +33,6 @@ public class OttShareRoomService {
     private final SharingUserRepository sharingUserRepository;
     private final WaitingUserRepository waitingUserRepository;
     private final MessageRepository messageRepository;
-    private final SharingUserFactory sharingUserFactory;
 
     /**
      * ott 공유방 생성
@@ -50,7 +50,7 @@ public class OttShareRoomService {
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(id)
                 .orElseThrow(() -> new OttSharingRoomNotFoundException(id));
 
-        return new OttShareRoomResponse(ottShareRoom);
+        return OttShareRoomResponse.from(ottShareRoom);
     }
 
     /**
@@ -133,6 +133,8 @@ public class OttShareRoomService {
     /**
      * 새로운 맴버 찾기
      */
+    @Transactional
+    @DistributeLock(key = "#roomId")
     public boolean findNewMember(Long roomId) {
         // OttShareRoom의 ottType을 기준으로 대기 목록에서 새로운 멤버를 찾습니다.
         OttShareRoom ottShareRoom = ottShareRoomRepository.findById(roomId)
@@ -143,8 +145,8 @@ public class OttShareRoomService {
 
         if (!newMembers.isEmpty()) {
             WaitingUser waitingUser = newMembers.get(0);
-            // 팩토리 서비스를 사용하여 SharingUser 생성
-            SharingUser sharingUser = sharingUserFactory.createFromWaitingUser(waitingUser, ottShareRoom);
+
+            SharingUser sharingUser = SharingUser.from(waitingUser, ottShareRoom);
             // OttShareRoom에 SharingUser 추가
             ottShareRoom.addUser(sharingUser);
             waitingUserRepository.delete(waitingUser);  // 대기 목록에서 제거
