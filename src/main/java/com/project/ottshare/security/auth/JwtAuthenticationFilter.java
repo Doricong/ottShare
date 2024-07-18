@@ -1,4 +1,4 @@
-package com.project.ottshare.security.oauth;
+package com.project.ottshare.security.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ottshare.dto.userDto.LoginUserRequest;

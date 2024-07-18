@@ -121,14 +121,6 @@ public class UserService {
         }
     }
 
-    public boolean authenticateUser(String userDetailsPassword, String password) {
-        return encoder.matches(password, userDetailsPassword);
-    }
-
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
     private boolean isVerify(CheckCodeRequest findUsernameRequest) {
         return smsCertificationDao.hasKey(findUsernameRequest.getPhoneNumber()) &&
                 smsCertificationDao.getSmsCertification(findUsernameRequest.getPhoneNumber())

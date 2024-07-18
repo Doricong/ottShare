@@ -3,7 +3,7 @@ package com.project.ottshare.config;
 import com.project.ottshare.security.auth.JwtFilter;
 import com.project.ottshare.security.oauth.CustomOAuth2AuthenticationSuccessHandler;
 import com.project.ottshare.security.oauth.CustomOAuth2UserService;
-import com.project.ottshare.security.oauth.JwtAuthenticationFilter;
+import com.project.ottshare.security.auth.JwtAuthenticationFilter;
 import com.project.ottshare.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +88,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                 );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

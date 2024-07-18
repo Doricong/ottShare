@@ -133,7 +133,6 @@ public class OttShareRoomService {
     /**
      * 새로운 맴버 찾기
      */
-    @Transactional
     @DistributeLock(key = "#roomId")
     public boolean findNewMember(Long roomId) {
         // OttShareRoom의 ottType을 기준으로 대기 목록에서 새로운 멤버를 찾습니다.

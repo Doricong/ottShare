@@ -29,12 +29,12 @@ public class DistributeLockAop {
         Method method = signature.getMethod();
         DistributeLock distributeLock = method.getAnnotation(DistributeLock.class);
 
-        String key = REDISSON_KEY_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributeLock.key());    // (2)
+        String key = REDISSON_KEY_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributeLock.key());
 
         RLock rLock = redissonClient.getLock(key);
 
         try {
-            boolean available = rLock.tryLock(distributeLock.waitTime(), distributeLock.leaseTime(), distributeLock.timeUnit());    // (4)
+            boolean available = rLock.tryLock(distributeLock.waitTime(), distributeLock.leaseTime(), distributeLock.timeUnit());
             if (!available) {
                 return false;
             }
