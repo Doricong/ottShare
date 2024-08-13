@@ -1,9 +1,9 @@
-package com.project.ottshare.service.waitingUser;
+package com.project.ottshare.service;
 
+import com.project.ottshare.aop.DistributeLock;
 import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.dto.waitingUserDto.WaitingUserResponse;
-import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.entity.WaitingUser;
 import com.project.ottshare.enums.OttType;
@@ -17,16 +17,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalLong;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class WaitingUserServiceImpl implements WaitingUserService{
+public class WaitingUserService {
 
     private final WaitingUserRepository waitingUserRepository;
     private final UserRepository userRepository;
@@ -34,20 +33,18 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     /**
      * user 저장
      */
-    @Override
-    @Transactional
+    @DistributeLock(key = "#waitingUserRequest.userInfo.username")
     public void createWaitingUser(WaitingUserRequest waitingUserRequest) {
         User user = userRepository.findByUsername(waitingUserRequest.getUserInfo().getUsername())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을수 없습니다."));
 
-        WaitingUser waitingUser = waitingUserRequest.toEntity(user);
+        WaitingUser waitingUser = WaitingUser.from(waitingUserRequest, user);
         waitingUserRepository.save(waitingUser);
     }
 
     /**
      * user 삭제
      */
-    @Override
     @Transactional
     public void deleteUser(Long id) {
         WaitingUser waitingUser = waitingUserRepository.findById(id)
@@ -59,18 +56,14 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     /**
      * user 삭제
      */
-    @Override
     @Transactional
     public void deleteUsers(List<WaitingUserResponse> waitingUserResponses) {
-        for (WaitingUserResponse waitingUserResponse : waitingUserResponses) {
-            WaitingUser waitingUser = waitingUserRepository.findById(waitingUserResponse.getId())
-                    .orElseThrow(() -> new UserNotFoundException(waitingUserResponse.getId()));
-            //waitingUser 삭제
-            waitingUserRepository.delete(waitingUser);
-        }
+        waitingUserResponses.stream()
+                .map(waitingUserResponse -> waitingUserRepository.findById(waitingUserResponse.getId())
+                        .orElseThrow(() -> new UserNotFoundException(waitingUserResponse.getId())))
+                .forEach(waitingUserRepository::delete);
     }
 
-    @Override
     public Optional<Long> getWaitingUserIdByUserId(Long userId) {
         return waitingUserRepository.findByUserId(userId)
                 .map(WaitingUser::getId);
@@ -79,39 +72,29 @@ public class WaitingUserServiceImpl implements WaitingUserService{
     /**
      * 리더가 있는지 확인
      */
-    @Override
     public WaitingUserResponse getLeaderByOtt(OttType ott) {
         WaitingUser waitingUser = waitingUserRepository.findLeaderByOtt(ott)
                 .orElseThrow(() -> new OttLeaderNotFoundException(ott));
 
-        return new WaitingUserResponse(waitingUser);
+        return WaitingUserResponse.from(waitingUser);
     }
 
     /**
      * 리더가 아닌 user가 모두 있는지 확인
      */
-    @Override
     public List<WaitingUserResponse> getNonLeaderByOtt(OttType ott) {
         int nonLeaderCount = getNonLeaderCountByOtt(ott);
-
         List<WaitingUser> waitingUsers = waitingUserRepository.findNonLeadersByOtt(ott, nonLeaderCount);
-
         //리더가 아닌 user가 모두 있는지 확인
         if (waitingUsers.size() != nonLeaderCount) {
             throw new OttNonLeaderNotFoundException(ott);
         }
 
-        List<WaitingUserResponse> waitingUserResponses = new ArrayList<>();
-
-        for (WaitingUser waitingUser : waitingUsers) {
-            WaitingUserResponse waitingUserResponse = new WaitingUserResponse(waitingUser);
-            waitingUserResponses.add(waitingUserResponse);
-        }
-
-        return waitingUserResponses;
+        return waitingUsers.stream()
+                .map(WaitingUserResponse::from)
+                .collect(Collectors.toList());
     }
 
-    @Override
     public Optional<IsLeaderAndOttResponse> getWaitingUserIsLeaderAndOttByUserId(Long userId) {
         Optional<WaitingUser> waitingUser = waitingUserRepository.findByUserUserId(userId);
         return waitingUser.map(user -> new IsLeaderAndOttResponse(user.isLeader(), user.getOtt()));

@@ -52,29 +52,18 @@ public class UserRequest {
 
     private Role role;
 
-    public User toEntity() {
-        User user = User.builder()
-                .name(name)
-                .username(username)
-                .password(password)
-                .nickname(nickname)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .account(account)
-                .accountHolder(accountHolder)
-                .bank(bank)
-                .role(role)
+    public static UserRequest from(UserInfo userInfo) {
+        return UserRequest.builder()
+                .name(userInfo.getName())
+                .username(userInfo.getUsername())
+                .password(userInfo.getPassword())
+                .nickname(userInfo.getNickname())
+                .email(userInfo.getEmail())
+                .phoneNumber(userInfo.getPhoneNumber())
+                .bank(userInfo.getBank())
+                .account(userInfo.getAccount())
+                .accountHolder(userInfo.getAccountHolder())
+                .role(userInfo.getRole())
                 .build();
-
-        return user;
-    }
-
-    public UserRequest(String username, String password, String nickname, String account, String accountHolder, BankType bank) {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.account = account;
-        this.accountHolder  = accountHolder;
-        this.bank = bank;
     }
 }

@@ -1,4 +1,4 @@
-package com.project.ottshare.service.ottRecommendation;
+package com.project.ottshare.service;
 
 import com.project.ottshare.dto.ottRecQuestionsDto.OttRecQResponse;
 import com.project.ottshare.entity.OttRecQuestions;
@@ -13,18 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class OttRecQServiceImpl implements OttRecQService {
+public class OttRecQService {
 
     private final OttRecQRepository ottRecQuestionsRepository;
 
     /**
      * 양자택일 질문 가져오기
      */
-    @Override
     public OttRecQResponse getOttRecQuestions(Long id) {
         OttRecQuestions ottRecQuestions = ottRecQuestionsRepository.findById(id)
                 .orElseThrow(() -> new OttRecQNotFoundException(id));
 
-        return new OttRecQResponse(ottRecQuestions);
+        return OttRecQResponse.from(ottRecQuestions);
     }
 }

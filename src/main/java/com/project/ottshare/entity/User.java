@@ -1,7 +1,7 @@
 package com.project.ottshare.entity;
 
 import com.project.ottshare.dto.userDto.UserRequest;
-import com.project.ottshare.dto.userDto.UserSimpleRequest;
+import com.project.ottshare.dto.userDto.UserResponse;
 import com.project.ottshare.enums.BankType;
 import com.project.ottshare.enums.Role;
 import jakarta.persistence.*;
@@ -124,4 +124,37 @@ public class User extends BaseTimeEntity{
     public void leaveShareRoom() {
         this.isShareRoom = false;
     }
+
+    public static User from(UserResponse response) {
+        return User.builder()
+                .userId(response.getUserId())
+                .username(response.getUsername())
+                .password(response.getPassword())
+                .email(response.getEmail())
+                .nickname(response.getNickname())
+                .phoneNumber(response.getPhoneNumber())
+                .bank(response.getBank())
+                .account(response.getAccount())
+                .accountHolder(response.getAccountHolder())
+                .role(response.getRole())
+                .isShareRoom(response.isShareRoom())
+                .build();
+    }
+
+    public static User from(UserRequest request) {
+        return User.builder()
+                .name(request.getName())
+                .username(request.getUsername())
+                .password(request.getPassword())
+                .nickname(request.getNickname())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .account(request.getAccount())
+                .accountHolder(request.getAccountHolder())
+                .bank(request.getBank())
+                .role(request.getRole())
+                .build();
+    }
+
+
 }

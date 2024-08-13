@@ -1,5 +1,6 @@
 package com.project.ottshare.entity;
 
+import com.project.ottshare.dto.waitingUserDto.WaitingUserRequest;
 import com.project.ottshare.enums.OttType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,4 +36,14 @@ public class WaitingUser extends BaseTimeEntity{
 
     @Column(name = "is_leader", nullable = false)
     private boolean isLeader;
+
+    public static WaitingUser from(WaitingUserRequest request, User user) {
+        return WaitingUser.builder()
+                .user(user)
+                .ott(request.getOtt())
+                .ottId(request.getOttId())
+                .ottPassword(request.getOttPassword())
+                .isLeader(request.getIsLeader())
+                .build();
+    }
 }

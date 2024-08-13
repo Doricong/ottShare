@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import static com.project.ottshare.validation.ValidationGroups.*;
 

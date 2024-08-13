@@ -29,7 +29,8 @@ public class SmsCertificationDao {
     }
 
     public boolean hasKey(String phone) {
-        return redisTemplate.hasKey(PREFIX + phone);
+        Boolean hasKey = redisTemplate.hasKey(PREFIX + phone);
+        return hasKey != null && hasKey;
     }
 
 }

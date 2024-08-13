@@ -3,10 +3,9 @@ package com.project.ottshare.controller;
 import com.project.ottshare.dto.userDto.*;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.Role;
-import com.project.ottshare.exception.UserNotFoundException;
 import com.project.ottshare.security.auth.CustomUserDetails;
 import com.project.ottshare.security.auth.CustomUserDetailsService;
-import com.project.ottshare.service.user.UserService;
+import com.project.ottshare.service.UserService;
 import com.project.ottshare.util.JwtUtil;
 import com.project.ottshare.validation.CustomValidators;
 import com.project.ottshare.validation.ValidationSequence;
@@ -16,16 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,22 +33,7 @@ public class UserApiController {
     private final UserService userService;
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomValidators validators;
-    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginUserRequest userRequest) {
-        Authentication authenticate = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
-
-        String token = jwtUtil.generateToken(userRequest.getUsername());
-        Long expiration = jwtUtil.getExpiration();
-
-        JwtResponse jwtResponse = new JwtResponse(token, userRequest.getUsername(), expiration);
-
-        return ResponseEntity.ok(jwtResponse);
-    }
 
     /**
      * 로그아웃
@@ -68,16 +49,14 @@ public class UserApiController {
      */
     @PostMapping
     public ResponseEntity<?> registerUser(@Validated(ValidationSequence.class) @RequestBody UserRequest dto,
-                                          BindingResult bindingResult) {
-        //유효성 검사
+                                      BindingResult bindingResult) {
         validators.joinValidateAll(dto, bindingResult);
         if (bindingResult.hasErrors()) {
             return buildValidationErrorResponse(bindingResult);
         }
-        // 회원 저장
-        userService.createUser(dto);
+        UserResponse userResponse = userService.createUser(dto);
 
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     /**
@@ -102,11 +81,10 @@ public class UserApiController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable("userId") Long id,
-                                               @Validated(ValidationSequence.class) @RequestBody UserSimpleRequest dto,
-                                               BindingResult bindingResult) {
+                                    @Validated(ValidationSequence.class) @RequestBody UserSimpleRequest dto,
+                                    BindingResult bindingResult) {
 //        validators.modifyValidateAll(userRequest, bindingResult);
         if (bindingResult.hasErrors()) {
-            // 모든 오류 메시지를 반환
             return buildValidationErrorResponse(bindingResult);
         }
         //회원 수정
@@ -141,7 +119,6 @@ public class UserApiController {
     @PostMapping("/find-username")
     public ResponseEntity<Object> verifyCodeAndFindUsername(@Valid @RequestBody CheckCodeRequest dto) {
         userService.verifySms(dto);
-        // 사용자 아이디 찾기
         String username = userService.getUsername(dto.getName(), dto.getPhoneNumber());
 
         FindUsernameResponse response = new FindUsernameResponse("아이디는 " + username + "입니다.");
@@ -162,14 +139,20 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 구글 소셜 로그인
+     */
     @PostMapping("/google-login")
     public ResponseEntity<?> loginWithGoogle(@RequestBody UserInfo userInfo) {
-        return handleSocialLogin(userInfo, "google");
+        return handleSocialLogin(userInfo);
     }
 
+    /**
+     * 카카오 소셜 로그인
+     */
     @PostMapping("/kakao-login")
     public ResponseEntity<?> loginWithKakao(@RequestBody UserInfo userInfo) {
-        return handleSocialLogin(userInfo, "google");
+        return handleSocialLogin(userInfo);
     }
 
     private ResponseEntity<?> buildValidationErrorResponse(BindingResult bindingResult) {
@@ -180,23 +163,26 @@ public class UserApiController {
         return ResponseEntity.badRequest().body(errorMessages);
     }
 
-    private ResponseEntity<?> handleSocialLogin(UserInfo userInfo, String provider) {
-        String email = userInfo.getEmail();
-        Optional<User> existingUser = userService.findUserByEmail(email);
+    private ResponseEntity<?> handleSocialLogin(UserInfo userInfo) {
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(userInfo.getEmail());
+            User user = userDetails.getUser();
 
-        if (existingUser.isPresent()) {
-            if (existingUser.get().getRole() == Role.SOCIAL) {
-                String token = jwtUtil.generateToken(existingUser.get().getUsername());
-                Long expiresIn = jwtUtil.getExpiration(); // Use the same expiration time as in the login method
-                return ResponseEntity.ok(new JwtResponse(token, existingUser.get().getUsername(), expiresIn));
+            if (user.getRole() == Role.SOCIAL) {
+                return generateJwtResponse(user.getUsername());
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 이메일입니다. 일반 로그인을 사용하세요.");
             }
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 이메일입니다. 일반 로그인을 사용하세요.");
-        } else {
-            userService.createUser(userInfo.toUserRequest());
-            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(userInfo.getUsername());
-            String token = jwtUtil.generateToken(userDetails.getUsername());
-            Long expiresIn = jwtUtil.getExpiration(); // Use the same expiration time as in the login method
-            return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), expiresIn));
+        } catch (UsernameNotFoundException e) {
+            UserResponse newUserResponse = userService.createUser(UserRequest.from(userInfo));
+            return generateJwtResponse(newUserResponse.getUsername());
         }
+    }
+
+    private ResponseEntity<JwtResponse> generateJwtResponse(String username) {
+        String token = jwtUtil.generateToken(username);
+        Long expiresIn = jwtUtil.getExpiration();
+        JwtResponse jwtResponse = new JwtResponse(token, username, expiresIn);
+        return ResponseEntity.ok(jwtResponse);
     }
 }

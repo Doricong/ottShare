@@ -2,7 +2,7 @@ package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
 import com.project.ottshare.dto.ottShareRoomDto.MessageResponse;
-import com.project.ottshare.service.message.MessageService;
+import com.project.ottshare.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class MessageController {
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/messages/{roomId}")
     public MessageRequest sendChatMessage(@Valid @RequestBody MessageRequest message,
-                                            @DestinationVariable Long roomId) throws InterruptedException {
+                                            @DestinationVariable Long roomId) {
         log.info("message={}", message.getMessage());
         String escapedMessage = HtmlUtils.htmlEscape(message.getMessage());
 

@@ -1,5 +1,6 @@
 package com.project.ottshare.entity;
 
+import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,5 +37,16 @@ public class Message extends BaseTimeEntity {
 
     public void setSharingUser(SharingUser user) {
         this.sharingUser = user;
+    }
+
+    public static Message from(MessageRequest messageRequest) {
+        OttShareRoom roomEntity = OttShareRoom.from(messageRequest.getOttShareRoom());
+        SharingUser userEntity = SharingUser.from(messageRequest.getOttRoomMemberResponse());
+
+        return Message.builder()
+                .ottShareRoom(roomEntity)
+                .sharingUser(userEntity)
+                .message(messageRequest.getMessage())
+                .build();
     }
 }

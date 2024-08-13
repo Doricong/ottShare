@@ -1,7 +1,7 @@
 package com.project.ottshare.controller;
 
 import com.project.ottshare.dto.sharingUserDto.IsLeaderAndOttResponse;
-import com.project.ottshare.service.sharingUser.SharingUserService;
+import com.project.ottshare.service.SharingUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

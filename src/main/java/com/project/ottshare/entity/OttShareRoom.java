@@ -1,5 +1,7 @@
 package com.project.ottshare.entity;
 
+import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
+import com.project.ottshare.dto.ottShareRoomDto.OttSharingRoomRequest;
 import com.project.ottshare.enums.OttType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -49,5 +51,23 @@ public class OttShareRoom extends BaseTimeEntity {
     public void addUser(SharingUser sharingUser) {
         sharingUsers.add(sharingUser);
         sharingUser.setOttShareRoom(this);
+    }
+
+    public static OttShareRoom from(OttShareRoomResponse response) {
+        return OttShareRoom.builder()
+                .id(response.getId())
+                .ott(response.getOtt())
+                .ottId(response.getOttId())
+                .ottPassword(response.getOttPassword())
+                .build();
+    }
+
+    public static OttShareRoom from(OttSharingRoomRequest request) {
+        return OttShareRoom.builder()
+                .sharingUsers(request.getSharingUsers())
+                .ott(request.getOtt())
+                .ottId(request.getOttId())
+                .ottPassword(request.getOttPassword())
+                .build();
     }
 }

@@ -1,9 +1,7 @@
-package com.project.ottshare.service.message;
+package com.project.ottshare.service;
 
 import com.project.ottshare.dto.ottShareRoomDto.MessageRequest;
 import com.project.ottshare.dto.ottShareRoomDto.MessageResponse;
-import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
-import com.project.ottshare.dto.sharingUserDto.OttRoomMemberResponse;
 import com.project.ottshare.entity.Message;
 import com.project.ottshare.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,31 +16,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MessageServiceImpl implements MessageService{
+public class MessageService {
 
     private final MessageRepository messageRepository;
 
-    @Override
     @Transactional
     public void createMessage(MessageRequest messageRequest) {
-        Message entity = messageRequest.toEntity();
+        Message entity = Message.from(messageRequest);
         messageRepository.save(entity);
     }
 
-    @Override
     public Page<MessageResponse> getMessages(Long roomId) {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
         Page<Message> messages = messageRepository.findAllByOttShareRoomIdOrderByCreatedDate(roomId, pageable);
-        return messages.map(this::convertToDto);
+        return messages.map(MessageResponse::from);
     }
 
-    private MessageResponse convertToDto(Message message) {
-        return new MessageResponse(
-                message.getId(),
-                new OttShareRoomResponse(message.getOttShareRoom()),
-                new OttRoomMemberResponse(message.getSharingUser()),
-                message.getMessage()
-        );
-    }
 
 }

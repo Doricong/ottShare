@@ -2,6 +2,8 @@ package com.project.ottshare.dto.userDto;
 
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PasswordGenerator {
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
@@ -13,10 +15,8 @@ public class PasswordGenerator {
     private static final Random RANDOM = new SecureRandom();
 
     public static String generatePassword(int length) {
-        StringBuilder password = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            password.append(ALL_CHARACTERS.charAt(RANDOM.nextInt(ALL_CHARACTERS.length())));
-        }
-        return password.toString();
+        return IntStream.range(0, length)
+                .mapToObj(i -> String.valueOf(ALL_CHARACTERS.charAt(RANDOM.nextInt(ALL_CHARACTERS.length()))))
+                .collect(Collectors.joining());
     }
 }
