@@ -1,5 +1,6 @@
 package com.project.ottshare.entity;
 
+import com.project.ottshare.dto.userDto.SocialUserRequest;
 import com.project.ottshare.dto.userDto.UserRequest;
 import com.project.ottshare.dto.userDto.UserResponse;
 import com.project.ottshare.enums.BankType;
@@ -77,27 +78,7 @@ public class User extends BaseTimeEntity{
     @Column(name = "is_share_room", nullable = false, columnDefinition = "boolean default false")
     private boolean isShareRoom;
 
-    public User(String username, String nickname, String email, String name, String password, String phoneNumber, BankType bank, String account, String accountHolder, Role role, boolean isShareRoom ) {
-        this.username = username;
-        this.nickname = nickname;
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.bank = bank;
-        this.account = account;
-        this.accountHolder = accountHolder;
-        this.role = role;
-        this.isShareRoom = isShareRoom;
-    }
 
-    public User(String username, String password, String nickname, String email, Role role) {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.email = email;
-        this.role = role;
-    }
 
 
     /**
@@ -123,6 +104,16 @@ public class User extends BaseTimeEntity{
 
     public void leaveShareRoom() {
         this.isShareRoom = false;
+    }
+
+    public static User from(SocialUserRequest userRequest) {
+        return User.builder()
+                .username(userRequest.getUsername())
+                .password(userRequest.getPassword())
+                .nickname(userRequest.getNickname())
+                .email(userRequest.getEmail())
+                .role(userRequest.getRole())
+                .build();
     }
 
     public static User from(UserResponse response) {

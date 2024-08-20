@@ -8,15 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException e) {
-        log.warn("User not found", e);
+    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
+        log.warn("User not found", ex);
         return buildErrorResponse(HttpStatus.NOT_FOUND, "User not found");
     }
 

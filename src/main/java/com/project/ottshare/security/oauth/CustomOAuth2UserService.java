@@ -1,5 +1,6 @@
 package com.project.ottshare.security.oauth;
 
+import com.project.ottshare.dto.userDto.SocialUserRequest;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.Role;
 import com.project.ottshare.repository.UserRepository;
@@ -54,13 +55,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUserFromUserInfo(OAuth2UserInfo userInfo) {
-        String username = userInfo.getProvider() + "_" + userInfo.getProviderId();
-        String password = null;
-        String nickname = userInfo.getName() + "_" + userInfo.getProviderId();
-        String email = userInfo.getEmail();
-        Role role = Role.SOCIAL;
 
-        return new User(username, password, nickname, email, role);
+        return User.from(SocialUserRequest.from(userInfo));
     }
 
     private void updateUser(User user) {

@@ -80,7 +80,6 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         user.updatePassword(encoder.encode(newPassword));
-        userRepository.save(user);
     }
 
     @Transactional

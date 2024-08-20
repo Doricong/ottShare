@@ -5,10 +5,13 @@ import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.Role;
 import com.project.ottshare.security.auth.CustomUserDetails;
 import com.project.ottshare.security.auth.CustomUserDetailsService;
+import com.project.ottshare.service.TokenBlacklistService;
 import com.project.ottshare.service.UserService;
 import com.project.ottshare.util.JwtUtil;
 import com.project.ottshare.validation.CustomValidators;
 import com.project.ottshare.validation.ValidationSequence;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,7 @@ public class UserApiController {
 
     private final UserService userService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
     private final CustomValidators validators;
     private final JwtUtil jwtUtil;
 
@@ -39,7 +44,16 @@ public class UserApiController {
      * 로그아웃
      */
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String accessToken = authorizationHeader.substring(7);
+            long expirationTime = jwtUtil.extractAllClaims(accessToken).getExpiration().getTime() - System.currentTimeMillis();
+
+            // 토큰을 블랙리스트에 추가
+            tokenBlacklistService.addToBlacklist(accessToken, expirationTime);
+        }
+
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok().body("로그아웃 되었습니다.");
     }
@@ -155,6 +169,37 @@ public class UserApiController {
         return handleSocialLogin(userInfo);
     }
 
+    /**
+     * refreshToken 갱신
+     */
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshAccessToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No refresh token provided");
+        }
+
+        String refreshToken = Arrays.stream(cookies)
+                .filter(cookie -> "refresh_token".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+
+        if (refreshToken == null || jwtUtil.isTokenExpired(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
+        }
+
+        // 블랙리스트에 있는지 확인
+        if (tokenBlacklistService.isBlacklisted(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is blacklisted.");
+        }
+
+        String username = jwtUtil.extractUsername(refreshToken);
+        String newAccessToken = jwtUtil.generateToken(username);
+
+        return ResponseEntity.ok("{\"accessToken\": \"" + newAccessToken + "\"}");
+    }
+
     private ResponseEntity<?> buildValidationErrorResponse(BindingResult bindingResult) {
         List<String> errorMessages = bindingResult.getAllErrors()
                 .stream()
@@ -180,9 +225,10 @@ public class UserApiController {
     }
 
     private ResponseEntity<JwtResponse> generateJwtResponse(String username) {
-        String token = jwtUtil.generateToken(username);
-        Long expiresIn = jwtUtil.getExpiration();
-        JwtResponse jwtResponse = new JwtResponse(token, username, expiresIn);
+        String accessToken = jwtUtil.generateToken(username);
+        String refreshToken = jwtUtil.generateRefreshToken(username);
+
+        JwtResponse jwtResponse = JwtResponse.from(accessToken, refreshToken, username, jwtUtil.getExpiration(), jwtUtil.getRefreshExpiration());
         return ResponseEntity.ok(jwtResponse);
     }
 }

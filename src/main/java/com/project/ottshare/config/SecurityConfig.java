@@ -4,6 +4,7 @@ import com.project.ottshare.security.auth.JwtFilter;
 import com.project.ottshare.security.oauth.CustomOAuth2AuthenticationSuccessHandler;
 import com.project.ottshare.security.oauth.CustomOAuth2UserService;
 import com.project.ottshare.security.auth.JwtAuthenticationFilter;
+import com.project.ottshare.service.TokenBlacklistService;
 import com.project.ottshare.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,8 @@ import java.util.List;
 @Slf4j
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService oauth2UserService;
     private final JwtFilter jwtFilter;
-    private final CustomOAuth2AuthenticationSuccessHandler oauth2SuccessHandler;
+    private final TokenBlacklistService tokenBlacklistService;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -46,8 +46,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
@@ -73,23 +73,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authenticationManager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtUtil);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, tokenBlacklistService, jwtUtil);
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/ws/**", "/api/users/join", "/api/users/login", "/api/authenticate", "/api/ottRecQuestions/**", "/faqs", "/chat/**", "/websocket/**", "/app/**", "/topic/**", "/api/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .oauth2Login(formLogin -> formLogin
-                        .loginPage("/users/login")
-                        .userInfoEndpoint(user -> user.userService(oauth2UserService))
-                        .successHandler(oauth2SuccessHandler)
-                        .defaultSuccessUrl("/", true)
                 );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }
