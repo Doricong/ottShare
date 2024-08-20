@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/ottRecQuestions")
+@RequestMapping("/api/ott-rec-questions")
 public class OttRecQuestionsApiController {
 
     private final OttRecQService ottRecQService;

@@ -9,6 +9,7 @@ import com.project.ottshare.entity.SharingUser;
 import com.project.ottshare.exception.OttLeaderNotFoundException;
 import com.project.ottshare.exception.OttNonLeaderNotFoundException;
 import com.project.ottshare.exception.UserNotFoundException;
+import com.project.ottshare.security.auth.CustomUserDetails;
 import com.project.ottshare.service.OttShareRoomService;
 import com.project.ottshare.service.SharingUserService;
 import com.project.ottshare.service.WaitingUserService;
@@ -16,6 +17,7 @@ import com.project.ottshare.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/waitingUsers")
+@RequestMapping("/api/waiting-users")
 @Slf4j
 public class WaitingUserApiController {
 
@@ -47,10 +49,10 @@ public class WaitingUserApiController {
     /**
      * user 삭제
      */
-    @DeleteMapping("/{matchingId}")
-    public ResponseEntity<String> deleteWaitingUser(@PathVariable("matchingId") Long matchingId) {
-        log.info("Deleting waiting user with matching ID: {}", matchingId);
-        waitingUserService.deleteUser(matchingId);
+    @DeleteMapping
+    public ResponseEntity<String> deleteWaitingUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("Deleting waiting user with matching ID: {}", userDetails.getId());
+        waitingUserService.deleteUser(userDetails.getId());
 
         return ResponseEntity.ok("User deleted successfully");
     }
@@ -58,11 +60,11 @@ public class WaitingUserApiController {
     /**
      * userId로 user 조회
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<Long> getWaitingUserId(@PathVariable("userId") Long userId) {
-        log.info("Fetching waiting user ID for user ID: {}", userId);
-        Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userId));
+    @GetMapping("/id")
+    public ResponseEntity<Long> getWaitingUserId(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("Fetching waiting user ID for user ID: {}", userDetails.getId());
+        Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userDetails.getId()));
 
         return ResponseEntity.ok(waitingUserId);
     }
@@ -70,11 +72,11 @@ public class WaitingUserApiController {
     /**
      * 리더, ott 반환
      */
-    @GetMapping("/{userId}/role-and-ott")
-    public ResponseEntity<IsLeaderAndOttResponse> getUserRoleAndOtt(@PathVariable("userId") Long userId) {
-        log.info("Fetching role and OTT info for user ID: {}", userId);
-        IsLeaderAndOttResponse isLeaderAndOttResponse = waitingUserService.getWaitingUserIsLeaderAndOttByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userId));
+    @GetMapping("/role-and-ott")
+    public ResponseEntity<IsLeaderAndOttResponse> getUserRoleAndOtt(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("Fetching role and OTT info for user ID: {}", userDetails.getId());
+        IsLeaderAndOttResponse isLeaderAndOttResponse = waitingUserService.getWaitingUserIsLeaderAndOttByUserId(userDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userDetails.getId()));
 
         return ResponseEntity.ok(isLeaderAndOttResponse);
     }

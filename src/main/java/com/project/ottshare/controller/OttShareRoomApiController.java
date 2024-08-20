@@ -3,17 +3,19 @@ package com.project.ottshare.controller;
 import com.project.ottshare.dto.ottShareRoom.OttShareRoomIdAndPasswordResponse;
 import com.project.ottshare.dto.ottShareRoomDto.OttShareRoomResponse;
 import com.project.ottshare.dto.sharingUserDto.SharingUserResponse;
+import com.project.ottshare.security.auth.CustomUserDetails;
 import com.project.ottshare.service.OttShareRoomService;
 import com.project.ottshare.service.SharingUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/ottShareRooms")
+@RequestMapping("/api/ott-share-rooms")
 @Slf4j
 public class OttShareRoomApiController {
 
@@ -23,10 +25,10 @@ public class OttShareRoomApiController {
     /**
      * 채팅방
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<OttShareRoomResponse> getRoomDetails(@PathVariable("userId") Long userId) {
-        log.info("Fetching OTT share room for user ID: {}", userId);
-        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userId);
+    @GetMapping
+    public ResponseEntity<OttShareRoomResponse> getRoomDetails(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("Fetching OTT share room for user ID: {}", userDetails.getId());
+        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userDetails.getId());
         OttShareRoomResponse ottShareRoom = ottShareRoomService.getOttShareRoom(sharingUser.getOttShareRoom().getId());
 
         return ResponseEntity.ok(ottShareRoom);
@@ -35,9 +37,9 @@ public class OttShareRoomApiController {
     /**
      * 강제퇴장
      */
-    @DeleteMapping("/{roomId}/users/{userId}")
-    public ResponseEntity<Void> kickUserFromRoom(@PathVariable("roomId") Long roomId,
-                                                 @PathVariable("userId") Long userId) {
+    @DeleteMapping("/{room-id}/users/{user-id}")
+    public ResponseEntity<Void> kickUserFromRoom(@PathVariable("room-id") Long roomId,
+                                                 @PathVariable("user-id") Long userId) {
         log.info("Kicking user ID: {} from room ID: {}", userId, roomId);
         ottShareRoomService.expelUserFromRoom(roomId, userId);
 
@@ -47,16 +49,16 @@ public class OttShareRoomApiController {
     /**
      * 스스로 채팅방 나가기
      */
-    @DeleteMapping("/{roomId}/users/{userId}/leave")
-    public ResponseEntity<Void> leaveRoom(@PathVariable("roomId") Long roomId,
-                                          @PathVariable("userId") Long userId) {
-        log.info("User ID: {} is leaving room ID: {}", userId, roomId);
-        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userId);
-        //나가는 사람이 리더면 공유방 제거
+    @DeleteMapping("/self")
+    public ResponseEntity<Void> leaveRoom(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("User ID: {} is leaving the room", userDetails.getId());
+        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userDetails.getId());
+        Long roomId = sharingUser.getOttShareRoom().getId();
+
         if (sharingUser.isLeader()) {
             ottShareRoomService.deleteOttShareRoom(roomId);
         } else {
-            ottShareRoomService.leaveRoom(roomId, userId);
+            ottShareRoomService.leaveRoom(roomId, userDetails.getId());
         }
         return ResponseEntity.ok().build();
     }
@@ -64,8 +66,9 @@ public class OttShareRoomApiController {
     /**
      * 체크
      */
-    @PostMapping("/{roomId}/users/{userId}/check")
-    public ResponseEntity<Void> checkUserInRoom(@PathVariable("roomId") Long roomId, @PathVariable("userId") Long userId) {
+    @PostMapping("/{room-id}/users/{user-id}/check")
+    public ResponseEntity<Void> checkUserInRoom(@PathVariable("room-id") Long roomId,
+                                                @PathVariable("user-id") Long userId) {
         log.info("Checking user ID: {} in room ID: {}", userId, roomId);
         ottShareRoomService.checkUserInRoom(roomId, userId);
 
@@ -75,12 +78,12 @@ public class OttShareRoomApiController {
     /**
      * 아이디, 비밀번호 확인
      */
-    @GetMapping("/{userId}/id-password")
-    public ResponseEntity<OttShareRoomIdAndPasswordResponse> getRoomIdAndPassword(@PathVariable("userId") Long userId) {
-        log.info("Fetching ID and Password for user ID: {}", userId);
-        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userId);
+    @GetMapping("/id-password")
+    public ResponseEntity<OttShareRoomIdAndPasswordResponse> getRoomIdAndPassword(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("Fetching ID and Password for user ID: {}", userDetails.getId());
+        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userDetails.getId());
         Long roomId = sharingUser.getOttShareRoom().getId();
-        OttShareRoomIdAndPasswordResponse ottShareRoomIdAndPasswordResponse = ottShareRoomService.getRoomIdAndPassword(userId, roomId);
+        OttShareRoomIdAndPasswordResponse ottShareRoomIdAndPasswordResponse = ottShareRoomService.getRoomIdAndPassword(userDetails.getId(), roomId);
 
         return ResponseEntity.ok(ottShareRoomIdAndPasswordResponse);
     }
@@ -88,8 +91,8 @@ public class OttShareRoomApiController {
     /**
      * 새로운 맴버 찾기
      */
-    @GetMapping("/{roomId}/new-member")
-    public ResponseEntity<String> findNewMember(@PathVariable("roomId") Long roomId) {
+    @GetMapping("/{room-id}/new-member")
+    public ResponseEntity<String> findNewMember(@PathVariable("room-id") Long roomId) {
         log.info("Finding new member for room ID: {}", roomId);
         boolean newMemberFound = ottShareRoomService.findNewMember(roomId);
         String message = newMemberFound ? "새로운 멤버를 찾았습니다" : "새로운 멤버를 찾지 못 했습니다";

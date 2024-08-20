@@ -66,9 +66,9 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(UserSimpleRequest userSimpleRequest) {
-        User user = userRepository.findById(userSimpleRequest.getId())
-                .orElseThrow(() -> new UserNotFoundException(userSimpleRequest.getId()));
+    public void updateUser(Long userId, UserSimpleRequest userSimpleRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         //user 정보 수정
         user.update(userSimpleRequest.getUsername(), encoder.encode(userSimpleRequest.getPassword()), userSimpleRequest.getNickname(), userSimpleRequest.getAccount(), userSimpleRequest.getAccountHolder(), userSimpleRequest.getBank());

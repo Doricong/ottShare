@@ -22,8 +22,8 @@ public class MessageController {
 
     private final MessageService messageService;
 
-    @MessageMapping("/chat/{roomId}")
-    @SendTo("/topic/messages/{roomId}")
+    @MessageMapping("/chat/{room-id}")
+    @SendTo("/topic/messages/{room-id}")
     public MessageRequest sendChatMessage(@Valid @RequestBody MessageRequest message,
                                             @DestinationVariable Long roomId) {
         log.info("message={}", message.getMessage());
@@ -37,7 +37,7 @@ public class MessageController {
     /**
      * 메시지 조회
      */
-    @GetMapping("/{roomId}")
+    @GetMapping("/{room-id}")
     public Page<MessageResponse> getMessages(@PathVariable Long roomId) {
         return messageService.getMessages(roomId);
     }

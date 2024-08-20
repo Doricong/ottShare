@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
@@ -76,25 +77,15 @@ public class UserApiController {
     /**
      * 마이페이지
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> getUserProfile(@PathVariable("userId") Long userId) {
-        UserResponse userResponse = userService.getUser(userId);
+    @GetMapping
+    public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserResponse userResponse = userService.getUser(userDetails.getId());
 
         return ResponseEntity.ok(userResponse);
     }
 
-    /**
-     * 회원정보 수정
-     */
-    @GetMapping("/{userId}/edit")
-    public ResponseEntity<UserResponse> getUpdateUserProfilePage(@PathVariable("userId") Long userId) {
-        UserResponse user = userService.getUser(userId);
-
-        return ResponseEntity.ok(user);
-    }
-
-    @PatchMapping("/{userId}")
-    public ResponseEntity<?> updateUserProfile(@PathVariable("userId") Long id,
+    @PatchMapping
+    public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
                                     @Validated(ValidationSequence.class) @RequestBody UserSimpleRequest dto,
                                     BindingResult bindingResult) {
 //        validators.modifyValidateAll(userRequest, bindingResult);
@@ -102,17 +93,19 @@ public class UserApiController {
             return buildValidationErrorResponse(bindingResult);
         }
         //회원 수정
-        userService.updateUser(dto);
+        userService.updateUser(userDetails.getId(), dto);
+        UserResponse updatedUser = userService.getUser(userDetails.getId());
 
-        return ResponseEntity.ok("User updated successfully");
+        return ResponseEntity.ok(updatedUser);
+
     }
 
     /**
      * 회원 탈퇴
      */
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable("userId") Long id) {
-        userService.deleteUser(id);
+    @DeleteMapping
+    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        userService.deleteUser(userDetails.getId());
 
         return ResponseEntity.ok("User Deleted successfully");
     }
