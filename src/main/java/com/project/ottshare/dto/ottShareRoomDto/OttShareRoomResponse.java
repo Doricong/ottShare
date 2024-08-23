@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class OttShareRoomResponse {
 
     private Long id;
+    @Builder.Default
     private List<OttRoomMemberResponse> ottRoomMemberResponses = new ArrayList<>();
     private OttType ott;
     private String ottId;

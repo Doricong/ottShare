@@ -25,9 +25,11 @@ public class OttShareRoom extends BaseTimeEntity {
     @Column(name = "ott_share_room_id")
     private Long id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "ottShareRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharingUser> sharingUsers = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "ottShareRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
 

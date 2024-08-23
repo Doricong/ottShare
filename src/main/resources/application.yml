@@ -1,13 +1,6 @@
 spring:
-  data:
-    redis:
-      host: redis-container
-      port: 6379
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql-container:3306/ottshare?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: 6585qwer
+  profiles:
+    active: local
   jpa:
     hibernate:
       ddl-auto: update
