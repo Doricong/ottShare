@@ -16,22 +16,23 @@ import java.util.Map;
 @Getter
 public class CustomUserDetails implements UserDetails, OAuth2User {
 
-    private User user;
-    private Map<String , Object> attributes;
+    private final User user;
+    private final Map<String , Object> attributes;
 
     // 일반 로그인
     public CustomUserDetails(User user) {
         this.user = user;
+        this.attributes = null;
     }
 
-    // Oauth2 로그인
+    // OAuth2 로그인
     public CustomUserDetails(User user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
     }
 
     public Long getId() {
-        return user.getUserId();
+        return user.getId();
     }
 
     public String getEmail() {

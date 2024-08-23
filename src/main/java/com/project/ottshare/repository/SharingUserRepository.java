@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface SharingUserRepository extends JpaRepository<SharingUser, Long>, SharingUserRepositoryCustom {
 
-    Optional<SharingUser> findByUserUserId(Long userId);
+    Optional<SharingUser> findByUser_Id(Long userId);
 
 }

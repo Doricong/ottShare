@@ -1,6 +1,5 @@
 package com.project.ottshare.dto.userDto;
 
-import com.project.ottshare.entity.OttShareRoom;
 import com.project.ottshare.entity.User;
 import com.project.ottshare.enums.BankType;
 import com.project.ottshare.enums.Role;
@@ -39,7 +38,7 @@ public class UserResponse {
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
-                .userId(user.getUserId())
+                .userId(user.getId())
                 .name(user.getName())
                 .username(user.getUsername())
                 .password(user.getPassword())

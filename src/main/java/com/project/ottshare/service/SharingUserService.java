@@ -48,7 +48,7 @@ public class SharingUserService {
     }
 
     public SharingUserResponse getSharingUserByUserId(Long userId) {
-        SharingUser sharingUser = sharingUserRepository.findByUserUserId(userId)
+        SharingUser sharingUser = sharingUserRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new SharingUserNotFoundException(userId));
 
         return SharingUserResponse.from(sharingUser);
@@ -62,7 +62,7 @@ public class SharingUserService {
     }
 
     public Optional<IsLeaderAndOttResponse> getSharingUserIsLeaderAndOttByUserId(Long userId) {
-        Optional<SharingUser> sharingUser = sharingUserRepository.findByUserUserId(userId);
+        Optional<SharingUser> sharingUser = sharingUserRepository.findByUser_Id(userId);
         return sharingUser.map(user -> new IsLeaderAndOttResponse(user.isLeader(), user.getOttShareRoom().getOtt()));
     }
 

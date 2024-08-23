@@ -24,7 +24,7 @@ public class User extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long userId;
+    private Long id;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inquiry> inquiries = new ArrayList<>();
@@ -118,7 +118,7 @@ public class User extends BaseTimeEntity{
 
     public static User from(UserResponse response) {
         return User.builder()
-                .userId(response.getUserId())
+                .id(response.getUserId())
                 .username(response.getUsername())
                 .password(response.getPassword())
                 .email(response.getEmail())

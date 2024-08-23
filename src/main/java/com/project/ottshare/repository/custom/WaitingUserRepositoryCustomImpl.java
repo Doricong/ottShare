@@ -47,7 +47,7 @@ public class WaitingUserRepositoryCustomImpl implements WaitingUserRepositoryCus
         return Optional.ofNullable(
                 queryFactory
                         .selectFrom(waitingUser)
-                        .where(waitingUser.user.userId.eq(userId))
+                        .where(waitingUser.user.id.eq(userId))
                         .fetchOne()
         );
     }

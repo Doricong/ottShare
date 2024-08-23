@@ -1,11 +1,11 @@
 spring:
   data:
     redis:
-      host: 127.0.0.1
+      host: redis-container
       port: 6379
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ottshare?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql-container:3306/ottshare?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: 6585qwer
   jpa:
@@ -14,6 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 
   security:
@@ -30,13 +31,7 @@ logging:
   level:
     org:
       springframework:
-        security=DEBUG:
-
-redis:
-  host: localhost
-  port: 6379
-  repositories:
-    enabled: false
+        security: DEBUG
 
 coolsms:
   api:

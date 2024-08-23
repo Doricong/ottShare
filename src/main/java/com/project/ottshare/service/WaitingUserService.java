@@ -96,7 +96,7 @@ public class WaitingUserService {
     }
 
     public Optional<IsLeaderAndOttResponse> getWaitingUserIsLeaderAndOttByUserId(Long userId) {
-        Optional<WaitingUser> waitingUser = waitingUserRepository.findByUserUserId(userId);
+        Optional<WaitingUser> waitingUser = waitingUserRepository.findByUser_Id(userId);
         return waitingUser.map(user -> new IsLeaderAndOttResponse(user.isLeader(), user.getOtt()));
     }
 
