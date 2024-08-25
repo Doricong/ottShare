@@ -1,0 +1,10 @@
+# application-prod.yml
+spring:
+  data:
+    redis:
+      host: ${APP_REDIS_HOST}  # .env 파일에 있는 변수명과 일치해야 합니다.
+      port: ${APP_REDIS_PORT}  # .env 파일에 있는 변수명과 일치해야 합니다.
+  datasource:
+    url: ${APP_DB_URL}  # .env 파일에 있는 변수명과 일치해야 합니다.
+    username: ${APP_DB_USERNAME}  # .env 파일에 있는 변수명과 일치해야 합니다.
+    password: ${APP_DB_PASSWORD}  # .env 파일에 있는 변수명과 일치해야 합니다.
