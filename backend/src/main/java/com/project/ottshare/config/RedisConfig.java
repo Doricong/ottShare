@@ -29,13 +29,6 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
-    @PostConstruct
-    public void init() {
-        System.out.println("Redis Host: " + redisHost);
-        System.out.println("Redis Port: " + redisPort);
-    }
-
-
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

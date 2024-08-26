@@ -33,9 +33,6 @@ services:
       - .env
     networks:
       - app-network
-    environment:
-      - APP_REDIS_HOST=redis-container
-      - APP_REDIS_PORT=6379
     depends_on:
       - mysql
       - redis
