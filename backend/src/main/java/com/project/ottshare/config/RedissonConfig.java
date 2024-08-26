@@ -3,7 +3,6 @@ package com.project.ottshare.config;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.redisson.spring.starter.RedissonProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()
-                .setAddress(REDISSON_HOST_PREFIX + redisHost + ":" + redisPort);
+                .setAddress(REDISSON_HOST_PREFIX + "redis-container" + ":" + 6379);
         return Redisson.create(config);
     }
 }
