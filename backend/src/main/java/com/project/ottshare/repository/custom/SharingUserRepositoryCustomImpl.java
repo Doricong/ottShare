@@ -1,6 +1,5 @@
 package com.project.ottshare.repository.custom;
 
-import com.project.ottshare.entity.QSharingUser;
 import com.project.ottshare.entity.SharingUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
