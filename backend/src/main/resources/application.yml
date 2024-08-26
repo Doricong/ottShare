@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: redis-container
+      port: 6379
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
   jpa:
