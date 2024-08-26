@@ -20,6 +20,7 @@ public class RedissonConfig {
 
     @Bean
     public RedissonClient redissonClient() {
+        System.out.println("Connecting to Redis on: " + redisHost + ":" + redisPort);
         Config config = new Config();
         config.useSingleServer()
                 .setAddress(REDISSON_HOST_PREFIX + redisHost + ":" + redisPort);
