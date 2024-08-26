@@ -12,5 +12,6 @@ public class OttshareApplication {
 		SpringApplication.run(OttshareApplication.class, args);
 	}
 
+
 }
 
