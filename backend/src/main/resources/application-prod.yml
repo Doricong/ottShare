@@ -2,9 +2,9 @@
 spring:
   data:
     redis:
-      host: localhost
+      host: redis-container
       port: 6379
   datasource:
-    url: ${APP_DB_URL}
-    username: ${APP_DB_USERNAME}
-    password: ${APP_DB_PASSWORD}
+    url: jdbc:mysql://mysql-container:3306/ottshare?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 6585qwer

@@ -6,5 +6,5 @@ spring:
       port: 6379
   datasource:
     url: jdbc:mysql://localhost:3306/ottshare?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${APP_DB_USERNAME}
-    password: ${APP_DB_PASSWORD}
+    username: root
+    password: 6585qwer
