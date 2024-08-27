@@ -13,6 +13,9 @@ RUN gradle clean bootJar
 # 2단계: 실행 단계
 FROM openjdk:17-jdk-slim
 
+# Redis 설치
+RUN apt-get update && apt-get install -y redis-server
+
 # 작업 디렉토리 설정
 WORKDIR /app
 
@@ -22,5 +25,7 @@ COPY --from=build /app/build/libs/ottshare-0.0.1-SNAPSHOT.jar app.jar
 # 필요한 포트를 외부에 노출
 EXPOSE 8080
 
-# 애플리케이션 실행
-CMD ["java", "-jar", "/app/app.jar"]
+
+# Redis와 OttShare 애플리케이션을 동시에 실행
+CMD ["sh", "-c", "redis-server /etc/redis/redis.conf & java -jar /app/app.jar"]
+
