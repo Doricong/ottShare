@@ -7,6 +7,7 @@ WORKDIR /app
 # 소스 파일을 컨테이너로 복사
 COPY . .
 
+
 # Gradle을 이용해 빌드 및 실행 가능한 JAR 파일 생성
 RUN gradle clean bootJar
 
