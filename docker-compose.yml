@@ -22,7 +22,7 @@ services:
 
 
   app:
-    image: jeonjaaehwan/ottshare-image:latest
+    image: wjswoghks/ottshare-image:latest
     container_name: ottshare-container
     ports:
       - "8081:8080"
