@@ -26,5 +26,4 @@ COPY --from=build /app/build/libs/ottshare-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 
 # Redis와 OttShare 애플리케이션을 동시에 실행
-CMD ["sh", "-c", "redis-server --daemonize yes && sleep 5 && java -jar /app/app.jar"]
-
+CMD ["sh", "-c", "redis-server --daemonize yes && java -jar /app/app.jar"]
