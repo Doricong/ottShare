@@ -24,6 +24,7 @@ services:
     networks:
       - app-network
 
+
   app:
     image: jeonjaaehwan/ottshare-image:latest
     container_name: ottshare-container
