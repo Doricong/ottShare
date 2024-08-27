@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: ${SPRING_PROFILES_ACTIVE}
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,7 +15,7 @@ spring:
       client:
         registration:
           google:
-            client-id: 680439794424-cpjpvio9atllukjnvb52aq9lkg97oa03.apps.googleusercontent.com
+            client-id: ${APP_GOOGLE_CLIENT_ID}
             scope:
               - email
               - profile
@@ -28,8 +28,8 @@ logging:
 
 coolsms:
   api:
-    key: NCSNE0EKVTZAUCCY
-    secret: V1SHVAWC0NI4DN9YE1LP3FTN12WSBHG
+    key: ${APP_COOLSMS_API_KEY}
+    secret: ${APP_COOLSMS_API_SECRET}
 
 server:
   servlet:
@@ -39,6 +39,6 @@ server:
       force-request: true
 
 jwt:
-  secret: 64461f01e1af406da538b9c48d801ce59142452199ff112fb5404c8e7e98e3ff
+  secret: ${APP_JWT_SECRET}
   expiration: 3600
   refreshExpiration: 86400
