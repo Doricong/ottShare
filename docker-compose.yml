@@ -1,0 +1,48 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 6585qwer
+      MYSQL_DATABASE: ottshare
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+    env_file:
+      - .env
+
+
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    env_file:
+      - .env
+
+
+  app:
+    image: wjswoghks/ottshare-image:latest
+    container_name: ottshare-container
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+      - redis
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
