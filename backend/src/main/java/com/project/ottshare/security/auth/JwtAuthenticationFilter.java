@@ -2,6 +2,7 @@ package com.project.ottshare.security.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ottshare.dto.userDto.LoginUserRequest;
+import com.project.ottshare.dto.userDto.UserResponse;
 import com.project.ottshare.service.TokenBlacklistService;
 import com.project.ottshare.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -72,5 +73,4 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
     }
-
 }

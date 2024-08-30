@@ -1,5 +1,6 @@
 package com.project.ottshare.config;
 
+import com.project.ottshare.security.auth.CustomAuthenticationSuccessHandler;
 import com.project.ottshare.security.auth.JwtFilter;
 import com.project.ottshare.security.oauth.CustomOAuth2AuthenticationSuccessHandler;
 import com.project.ottshare.security.oauth.CustomOAuth2UserService;

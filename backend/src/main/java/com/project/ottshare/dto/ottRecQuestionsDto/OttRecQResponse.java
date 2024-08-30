@@ -1,5 +1,7 @@
 package com.project.ottshare.dto.ottRecQuestionsDto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.project.ottshare.entity.OttRecQuestions;
 import com.project.ottshare.enums.OttType;
 import lombok.*;
@@ -9,6 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
 public class OttRecQResponse {
 
     private Long id;
