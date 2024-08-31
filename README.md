@@ -22,10 +22,12 @@
 </br>
 
 >## ERD
-<img src="https://github.com/user-attachments/assets/59a7f29f-e933-46f5-a34c-ce4be38b5efb" alt="erd" width="900" height="500"/>
+<img src="https://github.com/user-attachments/assets/595f2ebd-8c49-4d08-8af6-3735a2c9de62" alt="erd" width="900" height="500"/>
 
 
 <br>
 
 >## System Architecture
-<img src="https://github.com/user-attachments/assets/4b7e0dc9-192b-45d2-bc24-26dad190001f" alt="system architecture" width="1000" height="500"/>
+<img src="https://github.com/user-attachments/assets/07e07633-ae2d-458c-8e42-b80b9ff464c9" alt="system architecture" width="1000" height="500"/>
+
+
