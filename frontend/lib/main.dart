@@ -103,11 +103,9 @@ class MyApp extends StatelessWidget {
               int.parse(state.uri.queryParameters['selectedOttIndex']!);
               bool isLeader =
               bool.parse(state.uri.queryParameters['isLeader']!);
-              UserInfo userInfo = state.extra as UserInfo;
               return OTTInfoPage(
                   selectedOttIndex: selectedOttIndex,
-                  isLeader: isLeader,
-                  userInfo: userInfo);
+                  isLeader: isLeader);
             }),
         GoRoute(
             path: "/chatRoom",
@@ -118,8 +116,7 @@ class MyApp extends StatelessWidget {
         GoRoute(
             path: "/editProfile",
             builder: (context, state) {
-              UserInfo userInfo = state.extra as UserInfo;
-              return EditProfilePage(userInfo: userInfo);
+              return EditProfilePage();
             }),
       ]),
     );

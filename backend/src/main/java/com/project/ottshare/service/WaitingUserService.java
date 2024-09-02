@@ -47,7 +47,7 @@ public class WaitingUserService {
      */
     @Transactional
     public void deleteUser(Long id) {
-        WaitingUser waitingUser = waitingUserRepository.findById(id)
+        WaitingUser waitingUser = waitingUserRepository.findByUser_Id(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         waitingUserRepository.delete(waitingUser);

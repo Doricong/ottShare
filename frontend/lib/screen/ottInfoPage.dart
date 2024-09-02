@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:frontend/loginStorage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -9,9 +10,8 @@ import '../models/user.dart'; // UserInfo 모델 임포트
 class OTTInfoPage extends StatefulWidget {
   final int? selectedOttIndex;
   final bool? isLeader;
-  final UserInfo? userInfo; // UserInfo 추가
 
-  OTTInfoPage({Key? key, this.selectedOttIndex, this.isLeader, this.userInfo}) : super(key: key);
+  OTTInfoPage({Key? key, this.selectedOttIndex, this.isLeader}) : super(key: key);
 
   @override
   _OTTInfoPageState createState() => _OTTInfoPageState();
@@ -54,10 +54,12 @@ class _OTTInfoPageState extends State<OTTInfoPage> {
         return;
     }
 
+    UserInfo? userInfo = await LoginStorage.getUserInfo();
+
     Map<String, dynamic> requestBody = {
       'ott': ottTypeString, // 선택된 OTT 서비스의 이름 전송
-      'isLeader': isLeader,
-      'userInfo': widget.userInfo?.toJson(), // userInfo가 null이 아닌 경우에만 toJson() 메서드 호출
+      'isLeader': true,
+      'userInfo': userInfo?.toJson(), // userInfo가 null이 아닌 경우에만 toJson() 메서드 호출
       'ottId': ottAccountId,
       'ottPassword': ottAccountPassword,
     };
@@ -65,10 +67,12 @@ class _OTTInfoPageState extends State<OTTInfoPage> {
     // JSON으로 인코딩
     String requestBodyJson = jsonEncode(requestBody);
 
+    String? userToken = await LoginStorage.getUserToken();
+
     // 서버로 POST 요청 보내기
     final response = await http.post(
-      Uri.parse('http://${Localhost.ip}:8080/api/waitingUsers'),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse('http://${Localhost.ip}:8080/api/waiting-users'),
+      headers: {"Content-Type": "application/json", 'Authorization': '$userToken'},
       body: requestBodyJson,
     );
 

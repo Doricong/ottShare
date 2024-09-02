@@ -42,7 +42,7 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
     if (userInfo != null) {
       // sharing룸이 있으면 ott랑 역할 가져와야 함.
       if (isShareRoom == true) {
-        getOttAndRole("sharingUsers").then((value) {
+        getOttAndRole("sharing-users").then((value) {
           InfoOfLeaderAndOtt? info = value;
           setState(() {
             isLeader = info?.isLeader;
@@ -56,7 +56,7 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
             isStartMatching = value;
             if (value == true) {
               // 서버에서 ott랑 역할 가져와야 함.
-              getOttAndRole("waitingUsers").then((value) {
+              getOttAndRole("waiting-users").then((value) {
                 InfoOfLeaderAndOtt? info = value;
                 setState(() {
                   isLeader = info?.isLeader;
@@ -71,31 +71,13 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
   }
 
 
-  Future<UserInfo?> getUserInfo() async {
-    UserInfo? userInfo = await LoginStorage.getUserInfo();
-    int? id = userInfo?.userId;
-
-    final response = await http.get(
-      Uri.parse('http://${Localhost.ip}:8080/api/users/${id}/edit'),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      UserInfo userInfo = UserInfo.fromJson(jsonDecode(response.body));
-      return userInfo;
-    } else {
-      print("userInfo 가져오기 실패");
-      return null;
-    }
-  }
-
   Future<InfoOfLeaderAndOtt?> getOttAndRole(String address) async {
+    String? userToken = await LoginStorage.getUserToken();
     UserInfo? userInfo = await LoginStorage.getUserInfo();
-    int? id = userInfo?.userId;
 
     final response = await http.get(
-      Uri.parse('http://${Localhost.ip}:8080/api/${address}/${id}/role-and-ott'),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse('http://${Localhost.ip}:8080/api/${address}/role-and-ott'),
+      headers: {"Content-Type": "application/json", 'Authorization': '$userToken'},
     );
 
 
@@ -111,13 +93,16 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
 
 
   Future<bool> getIsStartMatching() async {
+    String? userToken = await LoginStorage.getUserToken();
     UserInfo? userInfo = await LoginStorage.getUserInfo();
     int? id = userInfo?.userId;
 
+    print("token = $userToken");
+
     // waitingUser에 해당 user가 있는지 확인
     final response = await http.get(
-      Uri.parse('http://${Localhost.ip}:8080/api/waitingUsers/${id}'),
-      // headers: {"Content-Type": "application/json"},
+      Uri.parse('http://${Localhost.ip}:8080/api/waiting-users/${id}'),
+      headers: {"Content-Type": "application/json", 'Authorization': '$userToken'},
     );
 
     print(response.body.toString());
@@ -171,9 +156,11 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
 
     var body = jsonEncode(requestMap);
 
+    String? userToken = await LoginStorage.getUserToken();
+
     final response = await http.post(
-      Uri.parse('http://${Localhost.ip}:8080/api/waitingUsers'),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse('http://${Localhost.ip}:8080/api/waiting-users'),
+      headers: {"Content-Type": "application/json", 'Authorization': '$userToken'},
       body: body,
     );
 
@@ -185,20 +172,26 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
             content: Text('자동매칭이 시작되었습니다.\n잠시만 기다려주세요!'),
             actions: [
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   context.pop();
-                  getUserInfo().then((value) {
+
+                  if (response.body == "Room created successfully.") {
+                    UserInfo? loadUserInfo = await LoginStorage.getUserInfo();
                     setState(() {
-                      userInfo = value;
-                      isShareRoom = userInfo?.isShareRoom;
-                      getOttAndRole("sharingUsers").then((value) {
-                        InfoOfLeaderAndOtt? info = value;
-                        setState(() {
-                          isLeader = info?.isLeader;
-                          selectedOttIndex = info?.selectedOtt;
-                        });
+                      loadUserInfo?.isShareRoom = true;
+                      userInfo = loadUserInfo;
+                      isShareRoom = true;
+                    });
+                    await LoginStorage.saveUser(loadUserInfo!);
+                  }
+
+                  setState(() {
+                    getOttAndRole("sharing-users").then((value) {
+                      InfoOfLeaderAndOtt? info = value;
+                      setState(() {
+                        isLeader = info?.isLeader;
+                        selectedOttIndex = info?.selectedOtt;
                       });
-                      print("userinfo value = ${value}");
                     });
                   });
                   getIsStartMatching();
@@ -235,11 +228,13 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
       return;
     }
 
+    String? userToken = await LoginStorage.getUserToken();
+
     try {
       var url = Uri.parse(
-          'http://${Localhost.ip}:8080/api/ottShareRooms/${userInfo!.userId}');
+          'http://${Localhost.ip}:8080/api/ott-share-rooms');
       var response =
-          await http.get(url, headers: {"Content-Type": "application/json"});
+          await http.get(url, headers: {"Content-Type": "application/json", 'Authorization': '$userToken'});
       Map<String, dynamic> json = jsonDecode(response.body);
 
       ChatRoom chatRoom = ChatRoom.fromJson(json, userInfo!);
@@ -400,19 +395,17 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
         context.push(
                 "/ottInfo?selectedOttIndex=$selectedOttIndex&isLeader=$isLeader",
                 extra: userInfo)
-            .then((result) {
+            .then((result) async {
           setState(() {
             // selectedOttIndex = null;
             // isLeader = null;
             isStartMatching = true;
           });
-          getUserInfo().then((value) {
-            setState(() {
-              userInfo = value;
-              isShareRoom = userInfo?.isShareRoom;
-              print("userinfo value = ${value}");
+          UserInfo? loadUserInfo = await LoginStorage.getUserInfo();
+          setState(() {
+            userInfo = loadUserInfo;
+            isShareRoom = userInfo?.isShareRoom;
             });
-          });
         }
       )
     ;
@@ -482,12 +475,14 @@ class _AutoMatchingPageState extends State<AutoMatchingPage> {
   }
 
   Future<void> cancelAutoMatching(BuildContext context) async {
-    final String apiUrl = 'http://${Localhost.ip}:8080/api/waitingUsers/${waitingUserid}';
+    String? userToken = await LoginStorage.getUserToken();
+    final String apiUrl = 'http://${Localhost.ip}:8080/api/waiting-users';
 
     final response = await http.delete(
       Uri.parse(apiUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': '$userToken'
       },
     );
 

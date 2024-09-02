@@ -20,7 +20,7 @@ public class SharingUserRepositoryCustomImpl implements SharingUserRepositoryCus
     public Optional<SharingUser> findUserByRoomIdAndUserId(Long roomId, Long userId) {
         SharingUser result = jpaQueryFactory.selectFrom(sharingUser)
                 .where(sharingUser.ottShareRoom.id.eq(roomId)
-                        .and(sharingUser.id.eq(userId)))
+                        .and(sharingUser.user.id.eq(userId)))
                 .fetchOne();
         return Optional.ofNullable(result);
 

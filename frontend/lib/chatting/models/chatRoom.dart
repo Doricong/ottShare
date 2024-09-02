@@ -71,7 +71,7 @@ class ChatRoom {
     return {
       'id': chatRoomId,
       'ottRoomMemberResponses': readerResponses,
-      'ottRoomMemberResponse': writer.toJson(),
+      // 'ottRoomMemberResponse': writer.toJson(),
       'ott': ottType,
       'ottId': ottId,
       'ottPassword': ottPassword,

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../localhost.dart';
+import '../loginStorage.dart';
 import '../models/bankType.dart';
 import '../models/user.dart';
 import 'package:http/http.dart' as http;
@@ -11,9 +12,8 @@ import 'package:http/http.dart' as http;
 
 
 class EditProfilePage extends StatefulWidget {
-  final UserInfo? userInfo;
 
-  const EditProfilePage({Key? key, required this.userInfo})
+  const EditProfilePage({Key? key})
       : super(key: key);
 
   @override
@@ -36,20 +36,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    userInfo = widget.userInfo;
-    _nameController = TextEditingController(text: userInfo?.name ?? '');
-    _usernameController = TextEditingController(text: userInfo?.username ?? '');
-    _passwordController = TextEditingController();
-    _nicknameController = TextEditingController(text: userInfo?.nickname ?? '');
-    _emailController = TextEditingController(text: userInfo?.email ?? '');
-    _phoneNumberController = TextEditingController(text: userInfo?.phoneNumber ?? '');
-    _accountController = TextEditingController(text: userInfo?.account ?? '');
-    _accountHolderController = TextEditingController(text: userInfo?.accountHolder ?? '');
-    _selectedBank = userInfo?.bank;
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    UserInfo? loadedUserInfo = await LoginStorage.getUserInfo();
+    setState(() {
+      userInfo = loadedUserInfo;
+      _nameController = TextEditingController(text: userInfo?.name ?? '');
+      _usernameController = TextEditingController(text: userInfo?.username ?? '');
+      _passwordController = TextEditingController();
+      _nicknameController = TextEditingController(text: userInfo?.nickname ?? '');
+      _emailController = TextEditingController(text: userInfo?.email ?? '');
+      _phoneNumberController = TextEditingController(text: userInfo?.phoneNumber ?? '');
+      _accountController = TextEditingController(text: userInfo?.account ?? '');
+      _accountHolderController = TextEditingController(text: userInfo?.accountHolder ?? '');
+      _selectedBank = userInfo?.bank;
+    });
   }
 
   Future<void> editUser(BuildContext context) async {
-    final String apiUrl = 'http://${Localhost.ip}:8080/api/users/${userInfo?.userId}';
+    final String apiUrl = 'http://${Localhost.ip}:8080/api/users';
 
     String username = _usernameController.text;
     String password = _passwordController.text;
@@ -72,11 +79,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     print("수정 정보");
     print(jsonEncode(data));
 
+    String? userToken = await LoginStorage.getUserToken();
+
     try {
       final response = await http.patch(
         Uri.parse(apiUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': '$userToken'
         },
         body: jsonEncode(data),
       );
@@ -84,6 +94,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
       print("response.statusCode = ${response.statusCode}");
       if (response.statusCode == 200) {
         context.pop();
+
+        final String apiUrl = 'http://${Localhost.ip}:8080/api/users';
+        final responseBody = await http.get(
+          Uri.parse(apiUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': '$userToken'
+          },
+        );
+
+        if (responseBody.statusCode == 200) {
+          print(jsonDecode(responseBody.body));
+          final loginResponse = jsonDecode(responseBody.body);
+          UserInfo userInfo = UserInfo.fromJson(loginResponse);
+          await LoginStorage.saveUser(userInfo);
+        }
+
         showDialog(
           context: context,
           builder: (BuildContext context) {

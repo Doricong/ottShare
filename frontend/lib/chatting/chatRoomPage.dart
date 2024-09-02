@@ -7,6 +7,8 @@ import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 
 import '../localhost.dart';
+import '../loginStorage.dart';
+import '../models/user.dart';
 import 'models/chatMember.dart';
 import 'models/chatRoom.dart';
 import 'models/message.dart';
@@ -98,8 +100,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Future<List<dynamic>> fetchMessages() async {
+
+    String? userToken = await LoginStorage.getUserToken();
+
+
     final response = await http.get(Uri.parse(
-        'http://${Localhost.ip}:8080/chat/${chatRoom.chatRoomId}/messages'));
+        'http://${Localhost.ip}:8080/api/messages/${chatRoom.chatRoomId}'),
+      headers: {"Content-Type": "application/json", 'Authorization': '$userToken'},);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -117,9 +124,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       Map<String, dynamic> messageRequestJson = messageRequest.toJson();
 
       print("messageRequestJson = ${messageRequestJson}");
+
       stompClient.send(
-        destination: '/app'
-            '/chat/${chatRoom.chatRoomId}',
+        destination: '/app/chat/${chatRoom.chatRoomId}',
         body: jsonEncode(messageRequestJson),
       );
 
@@ -147,10 +154,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
   
   Future<void> sendCheckRequest(int userId) async {
+    String? userToken = await LoginStorage.getUserToken();
+
     try {
       final response = await http.post(
-        Uri.parse('http://${Localhost.ip}:8080/api/ottShareRooms/${chatRoom.chatRoomId}/users/${userId}/check'),
-        headers: {"Content-Type": "application/json"},
+        Uri.parse('http://${Localhost.ip}:8080/api/ott-share-rooms/${chatRoom.chatRoomId}/users/${userId}/check'),
+        headers: {"Content-Type": "application/json", 'Authorization': '$userToken'},
       );
 
       if (response.statusCode == 200) {
@@ -330,7 +339,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                 onPressed: () {
                                   isCheckboxDisabled[index] = true;
                                   // 체크해달라고 요청
-                                  sendCheckRequest(notLeaderList[index].chatMemberId);
+                                  sendCheckRequest(notLeaderList[index].userInfo.userId);
                                   context.pop();
                                 },
                                 child: Align(
@@ -434,7 +443,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               TextButton(
                                 onPressed: () {
                                   context.pop();
-                                  kickMember(context, notLeaderList[index].chatMemberId);
+                                  kickMember(context, notLeaderList[index].userInfo.userId);
                                 },
                                 child: Align(
                                   alignment:
@@ -820,15 +829,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         ) );
   }
 
-  Future<void> kickMember(BuildContext context, int chatMemberId) async {
-    print("방이랑 회원 정보 = ${chatMemberId} + ${chatRoom.chatRoomId}");
-    
-    final String apiUrl = 'http://${Localhost.ip}:8080/api/ottShareRooms/${chatRoom.chatRoomId}/users/${chatMemberId}';
+  Future<void> kickMember(BuildContext context, int userId) async {
+    print("방이랑 회원 정보 = ${userId} + ${chatRoom.chatRoomId}");
+    String? userToken = await LoginStorage.getUserToken();
+
+    final String apiUrl = 'http://${Localhost.ip}:8080/api/ott-share-rooms/${chatRoom.chatRoomId}/users/${userId}';
 
     final response = await http.delete(
       Uri.parse(apiUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': '$userToken'
       },
     );
 
@@ -874,10 +885,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Future<void> renewChatRoom() async{
+    String? userToken = await LoginStorage.getUserToken();
+
     var url = Uri.parse(
-        'http://${Localhost.ip}:8080/api/ottShareRooms/${writer.userInfo.userId}');
+        'http://${Localhost.ip}:8080/api/ott-share-rooms');
     var response =
-    await http.get(url, headers: {"Content-Type": "application/json"});
+    await http.get(url, headers: {"Content-Type": "application/json", 'Authorization': '$userToken'});
     Map<String, dynamic> json = jsonDecode(response.body);
 
     ChatRoom chatRoomImpl = ChatRoom.fromJson(json, writer.userInfo);
@@ -886,13 +899,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Future<void> exitRoom(BuildContext context) async {
+    String? userToken = await LoginStorage.getUserToken();
 
-    final String apiUrl = 'http://${Localhost.ip}:8080/api/ottShareRooms/${chatRoom.chatRoomId}/users/${writer.chatMemberId}/leave';
+    final String apiUrl = 'http://${Localhost.ip}:8080/api/ott-share-rooms/self';
 
     final response = await http.delete(
       Uri.parse(apiUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': '$userToken'
       },
     );
 
@@ -901,6 +916,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
 
     if (response.statusCode == 200) {
+      UserInfo? userInfo = await LoginStorage.getUserInfo();
+      userInfo?.isShareRoom = false;
+      await LoginStorage.saveUser(userInfo!);
 
       context.go("/autoMatching?selectedIndex=0");
 

@@ -33,8 +33,8 @@ class ChatMember {
     return {
       'id': chatMemberId,
       'user': userInfo.toJson(),
-      'leader': isLeader,
-      'checked': isChecked,
+      'isLeader': isLeader,
+      'isChecked': isChecked,
     };
   }
 

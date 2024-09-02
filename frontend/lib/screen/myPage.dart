@@ -280,13 +280,15 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future<void> deleteUser(BuildContext context) async {
+    String? userToken = await LoginStorage.getUserToken();
 
-    final String apiUrl = 'http://${Localhost.ip}:8080/api/users/${userInfo?.userId}';
+    final String apiUrl = 'http://${Localhost.ip}:8080/api/users';
 
     final response = await http.delete(
       Uri.parse(apiUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': '$userToken'
       },
     );
 
@@ -296,6 +298,7 @@ class _MyPageState extends State<MyPage> {
 
     if (response.statusCode == 200) {
 
+      await LoginStorage.logout();
       context.pop();
       context.pushReplacement('/');
 

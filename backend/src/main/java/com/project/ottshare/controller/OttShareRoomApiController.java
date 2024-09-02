@@ -40,7 +40,7 @@ public class OttShareRoomApiController {
     @DeleteMapping("/{room-id}/users/{user-id}")
     public ResponseEntity<Void> kickUserFromRoom(@PathVariable("room-id") Long roomId,
                                                  @PathVariable("user-id") Long userId) {
-        log.info("Kicking user ID: {} from room ID: {}", userId, roomId);
+            log.info("Kicking user ID: {} from room ID: {}", userId, roomId);
         ottShareRoomService.expelUserFromRoom(roomId, userId);
 
         return ResponseEntity.ok().build();
@@ -52,7 +52,7 @@ public class OttShareRoomApiController {
     @DeleteMapping("/self")
     public ResponseEntity<Void> leaveRoom(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("User ID: {} is leaving the room", userDetails.getId());
-        SharingUserResponse sharingUser = sharingUserService.getSharingUser(userDetails.getId());
+        SharingUserResponse sharingUser = sharingUserService.getSharingUserByUserId(userDetails.getId());
         Long roomId = sharingUser.getOttShareRoom().getId();
 
         if (sharingUser.isLeader()) {

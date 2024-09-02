@@ -20,7 +20,7 @@ public class UserSimpleRequest {
     private String username;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.", groups = ValidationGroups.NotBlankGroups.class)
-    @Range(min = 8, max = 16, message = "8~16자 사이로 입력해주세요.", groups = ValidationGroups.RangeGroups.class)
+//    @Range(min = 8, max = 16, message = "8~16자 사이로 입력해주세요.", groups = ValidationGroups.RangeGroups.class)
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?!.*\\s).{8,16}$", message = "비밀번호는 영문, 숫자, 특수문자 모두 포함해주세요.", groups = ValidationGroups.PatternGroups.class)
     private String password;
 

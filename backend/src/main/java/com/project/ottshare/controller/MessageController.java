@@ -25,7 +25,7 @@ public class MessageController {
     @MessageMapping("/chat/{room-id}")
     @SendTo("/topic/messages/{room-id}")
     public MessageRequest sendChatMessage(@Valid @RequestBody MessageRequest message,
-                                            @DestinationVariable Long roomId) {
+                                            @DestinationVariable("room-id") Long roomId) {
         log.info("message={}", message.getMessage());
         String escapedMessage = HtmlUtils.htmlEscape(message.getMessage());
 
@@ -38,7 +38,7 @@ public class MessageController {
      * 메시지 조회
      */
     @GetMapping("/{room-id}")
-    public Page<MessageResponse> getMessages(@PathVariable Long roomId) {
+    public Page<MessageResponse> getMessages(@PathVariable("room-id") Long roomId) {
         return messageService.getMessages(roomId);
     }
 

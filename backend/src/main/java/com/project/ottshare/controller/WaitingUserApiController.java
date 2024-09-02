@@ -40,10 +40,15 @@ public class WaitingUserApiController {
     public ResponseEntity<String> createWaitingUser(@Validated(ValidationSequence.class) @RequestBody WaitingUserRequest dto) {
         log.info("Saving user data: {}", dto.getOtt());
         waitingUserService.createWaitingUser(dto);
-        createRoomIfPossible(dto);
 
-        return ResponseEntity.ok("Room created successfully.");
-
+        try {
+            createRoomIfPossible(dto);
+            return ResponseEntity.ok("Room created successfully.");
+        } catch (OttLeaderNotFoundException e) {
+            return ResponseEntity.ok("No leader");
+        } catch (OttNonLeaderNotFoundException e) {
+            return ResponseEntity.ok("No All Member");
+        }
     }
 
     /**
@@ -60,11 +65,12 @@ public class WaitingUserApiController {
     /**
      * userId로 user 조회
      */
-    @GetMapping("/id")
-    public ResponseEntity<Long> getWaitingUserId(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Long> getWaitingUserByUserId(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("Fetching waiting user ID for user ID: {}", userDetails.getId());
         Long waitingUserId = waitingUserService.getWaitingUserIdByUserId(userDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userDetails.getId()));
+                .orElse(0L);
+//                .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + userDetails.getId()));
 
         return ResponseEntity.ok(waitingUserId);
     }
