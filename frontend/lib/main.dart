@@ -84,13 +84,17 @@ class MyApp extends StatelessWidget {
         GoRoute(
             path: "/autoMatching",
             builder: (context, state) {
-              return HomePage(selectedIndex: 0);
+              return HomePage();
             }),
         GoRoute(
             path: "/home",
             builder: (context, state) {
               return HomePage(selectedIndex: 2);
             }),
+        GoRoute(
+          path: "/afterLogout",
+          builder: (context, state) => HomePage(),
+        ),
         // GoRoute(
         //     path: "/afterDeleteUser",
         //     builder: (context, state) {
@@ -179,7 +183,7 @@ class _HomePageState extends State<HomePage> {
           // 로그인 페이지에서 반환된 결과를 기반으로 상태를 업데이트합니다.
           setState(() {
             // _selectedIndex = 0;
-            context.pushReplacement("/autoMatching?selectedIndex=0");
+            context.pushReplacement("/home");
           });
           // if (result is Map<String, dynamic>) {
           //   setState(() {
@@ -205,6 +209,7 @@ class _HomePageState extends State<HomePage> {
   // 메인 위젯
   @override
   Widget build(BuildContext context) {
+
     String titleText = '';
 
     switch (_selectedIndex) {

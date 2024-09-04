@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import '../localhost.dart';
@@ -139,7 +140,12 @@ class _StartPageState extends State<StartPage> {
                         isQuestionSelected = false;
                       } else if (pageCount == 11) {
                         // autoMatching 페이지로 넘어가는 로직
-                        context.pushReplacement("/autoMatching?selectedIndex=0");
+                        print('현재 페이지 11');
+                        if (ModalRoute.of(context)?.settings.name != "/autoMatching") {
+                          context.pushReplacement("/autoMatching");
+                        } else {
+                          context.pushReplacement("/");
+                        }
                       }
                       else {
                         if (isQuestionSelected) {
@@ -159,8 +165,8 @@ class _StartPageState extends State<StartPage> {
                             }
                             countOttScore(beforeResponseBody!);
                             print("netflix= 점수 = ${netflix}");
-                            print("netflix= 점수 = ${tving}");
-                            print("netflix= 점수 = ${wavve}");
+                            print("tiving= 점수 = ${tving}");
+                            print("wavve= 점수 = ${wavve}");
                             OttQuestionInfo? questionInfo = await sendGetQuestionRequest(pageCount);
                             beforeResponseBody = questionInfo;
                             setState(() {

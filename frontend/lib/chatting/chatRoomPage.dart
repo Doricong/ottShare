@@ -920,7 +920,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       userInfo?.isShareRoom = false;
       await LoginStorage.saveUser(userInfo!);
 
-      context.go("/autoMatching?selectedIndex=0");
+      context.go("/home");
 
     } else {
       print("방 나가기 오류");

@@ -173,7 +173,7 @@ class _MyPageState extends State<MyPage> {
         print("로그아웃 성공");
         LoginStorage.logout();
 
-        context.go("/home");
+        context.go("/afterLogout");
 
       } else {
         print("로그아웃 실패");
